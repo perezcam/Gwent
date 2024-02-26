@@ -1,0 +1,30 @@
+/media/frankperez/Local Disk/Proyecto Brr no tocar/p2/bin/Debug/net6.0/p2
+/media/frankperez/Local Disk/Proyecto Brr no tocar/p2/bin/Debug/net6.0/p2.deps.json
+/media/frankperez/Local Disk/Proyecto Brr no tocar/p2/bin/Debug/net6.0/p2.runtimeconfig.json
+/media/frankperez/Local Disk/Proyecto Brr no tocar/p2/bin/Debug/net6.0/p2.dll
+/media/frankperez/Local Disk/Proyecto Brr no tocar/p2/bin/Debug/net6.0/p2.pdb
+/media/frankperez/Local Disk/Proyecto Brr no tocar/p2/obj/Debug/net6.0/p2.csproj.AssemblyReference.cache
+/media/frankperez/Local Disk/Proyecto Brr no tocar/p2/obj/Debug/net6.0/p2.GeneratedMSBuildEditorConfig.editorconfig
+/media/frankperez/Local Disk/Proyecto Brr no tocar/p2/obj/Debug/net6.0/p2.AssemblyInfoInputs.cache
+/media/frankperez/Local Disk/Proyecto Brr no tocar/p2/obj/Debug/net6.0/p2.AssemblyInfo.cs
+/media/frankperez/Local Disk/Proyecto Brr no tocar/p2/obj/Debug/net6.0/p2.csproj.CoreCompileInputs.cache
+/media/frankperez/Local Disk/Proyecto Brr no tocar/p2/obj/Debug/net6.0/p2.dll
+/media/frankperez/Local Disk/Proyecto Brr no tocar/p2/obj/Debug/net6.0/refint/p2.dll
+/media/frankperez/Local Disk/Proyecto Brr no tocar/p2/obj/Debug/net6.0/p2.pdb
+/media/frankperez/Local Disk/Proyecto Brr no tocar/p2/obj/Debug/net6.0/p2.genruntimeconfig.cache
+/media/frankperez/Local Disk/Proyecto Brr no tocar/p2/obj/Debug/net6.0/ref/p2.dll
+/media/frankperez/Local Disk/1er año/p2/obj/Debug/net6.0/p2.csproj.AssemblyReference.cache
+/media/frankperez/Local Disk/1er año/p2/obj/Debug/net6.0/p2.GeneratedMSBuildEditorConfig.editorconfig
+/media/frankperez/Local Disk/1er año/p2/obj/Debug/net6.0/p2.AssemblyInfoInputs.cache
+/media/frankperez/Local Disk/1er año/p2/obj/Debug/net6.0/p2.AssemblyInfo.cs
+/media/frankperez/Local Disk/1er año/p2/obj/Debug/net6.0/p2.csproj.CoreCompileInputs.cache
+/media/frankperez/Local Disk/1er año/p2/obj/Debug/net6.0/p2.dll
+/media/frankperez/Local Disk/1er año/p2/obj/Debug/net6.0/refint/p2.dll
+/media/frankperez/Local Disk/1er año/p2/obj/Debug/net6.0/p2.pdb
+/media/frankperez/Local Disk/1er año/p2/bin/Debug/net6.0/p2
+/media/frankperez/Local Disk/1er año/p2/bin/Debug/net6.0/p2.deps.json
+/media/frankperez/Local Disk/1er año/p2/bin/Debug/net6.0/p2.runtimeconfig.json
+/media/frankperez/Local Disk/1er año/p2/bin/Debug/net6.0/p2.dll
+/media/frankperez/Local Disk/1er año/p2/bin/Debug/net6.0/p2.pdb
+/media/frankperez/Local Disk/1er año/p2/obj/Debug/net6.0/p2.genruntimeconfig.cache
+/media/frankperez/Local Disk/1er año/p2/obj/Debug/net6.0/ref/p2.dll
