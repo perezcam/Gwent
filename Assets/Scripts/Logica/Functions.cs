@@ -14,7 +14,6 @@ namespace GameLogic
         {
             
         }
-        
         public SpecialFunction function;
         
         //Si la carta no tiene una funcion especifica solamente le incrementa al jugador sus puntos
@@ -170,6 +169,7 @@ namespace GameLogic
             }
             Card powerfullestCard = enemyBattleField.OrderByDescending((card)=> card.powerattack).ToList().ElementAt(0); 
             enemy.cardstodelinUI.Add(powerfullestCard.ID);
+            enemy.totalforce -= powerfullestCard.powerattack;
             
             if(enemy.battleField.contactrow.Contains(powerfullestCard))
                  enemy.battleField.contactrow.Remove(powerfullestCard);
@@ -195,6 +195,8 @@ namespace GameLogic
             }
             Card powerfullestCard = enemyBattleField.OrderBy((card)=> card.powerattack).ToList().ElementAt(0); 
             enemy.cardstodelinUI.Add(powerfullestCard.ID);
+            enemy.totalforce -= powerfullestCard.powerattack;
+
             if(enemy.battleField.contactrow.Contains(powerfullestCard))
                  enemy.battleField.contactrow.Remove(powerfullestCard);
             else if(enemy.battleField.distantrow.Contains(powerfullestCard))
@@ -257,9 +259,16 @@ namespace GameLogic
             foreach(Card Card in targetrow)
             {
                 if (index>2)
-                card.owner.GetEnemy().cardstodelinUI.Add(Card.ID);
+                {
+                    card.owner.GetEnemy().cardstodelinUI.Add(Card.ID);
+                    card.owner.GetEnemy().totalforce -= Card.powerattack; 
+                }
                 else
-                card.owner.cardstodelinUI.Add(Card.ID);
+                {
+                   card.owner.cardstodelinUI.Add(Card.ID);
+                   card.owner.totalforce -= Card.powerattack;
+                }
+
             }
         }
 
@@ -271,7 +280,7 @@ namespace GameLogic
             ownBattefield.AddRange(card.owner.battleField.contactrow);
             ownBattefield.AddRange(card.owner.battleField.distantrow);
             ownBattefield.AddRange(card.owner.battleField.siegerow);
-            int sum = 0;
+            int sum = card.powerattack;
             int avaragepower=0;
            
             foreach(Card Card in ownBattefield)
@@ -283,7 +292,7 @@ namespace GameLogic
                 card.owner.totalforce = card.powerattack;
                 return;
             }
-            avaragepower = sum/ownBattefield.Count();
+            avaragepower = sum/ownBattefield.Count()+1;
 
             foreach (Card Card in card.owner.battleField.contactrow)
             {
@@ -304,6 +313,7 @@ namespace GameLogic
                 Card.owner.totalforce += Card.powerattack;
             }
             card.powerattack = avaragepower;
+            card.owner.totalforce+= card.powerattack;
         }
     }
 }

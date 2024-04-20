@@ -10,8 +10,6 @@ using System.Linq;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.XR;
-
-
 public class GameManager: MonoBehaviour
 {
     public GameObject WeatherRow;
@@ -168,9 +166,6 @@ public class GameManager: MonoBehaviour
         else
         logicGame.player2.OnTurn=false;
     }
-
-       
-   
 }
 
 

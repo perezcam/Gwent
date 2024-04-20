@@ -67,13 +67,13 @@ public class Player:MonoBehaviour
         UpdateCardsinGame();
         UpdateCardsPower(row); 
         UpdateCardWeather();
-        Debug.Log(GameManager.instance.logicGame.PlayerOnTurn().totalforce+" puntos del jugador "+GameManager.instance.logicGame.PlayerOnTurn().nick );
         points.text = GameManager.instance.logicGame.PlayerOnTurn().totalforce.ToString();
         GameManager.instance.logicGame.player1.cardstodelinUI = new List<int>();
         GameManager.instance.logicGame.player2.cardstodelinUI = new List<int>();
 
     }
 
+    //Actualiza el card.attackvalue de cada carta en caso de que haya sido afectado por un efecto
     public void UpdateCardsPower(List<GameObject> UIrow)
     {
         foreach (GameObject Card in UIrow)
@@ -89,8 +89,10 @@ public class Player:MonoBehaviour
 
         } 
     }
+    //Actualiza las cartas en la interfaz del juego a partir de los cambios que ocurran en la logica
     public void UpdateCardsinGame()
     { 
+       Player enemy = (GameManager.instance.player1==this)? GameManager.instance.player2: GameManager.instance.player1; 
        foreach (int ID in GameManager.instance.logicGame.PlayerOnTurn().cardstodelinUI)
        {
             //Esto hace el efecto robar una carta
@@ -102,7 +104,7 @@ public class Player:MonoBehaviour
             {
                 try
                 {
-                    Find_Destroy_Card(CardDictionary[ID],this);
+                    Destroy(CardDictionary[ID]);
                 }
                 catch (Exception)
                 {
@@ -120,7 +122,8 @@ public class Player:MonoBehaviour
             Debug.Log(ID);
             try
             {
-                Find_Destroy_Card(CardDictionary[ID],(GameManager.instance.player1==this)? GameManager.instance.player2: GameManager.instance.player1 );
+                //Quitar destroy y poner funcion de mover al cementerio cuando este
+                Destroy(enemy.CardDictionary[ID]);
             }
             catch (Exception)
             {
@@ -128,16 +131,10 @@ public class Player:MonoBehaviour
             }   
        } 
     }
-
-    public static void Find_Destroy_Card(GameObject card, Player player)
-    {
-        foreach (GameObject Card in player.board.totalboard)
-        {
-            if(card.GetComponent<CardDisplay>().ID == Card.GetComponent<CardDisplay>().ID )
-                Destroy(Card);
-        }
-    }
-
+    
+    
+    // Si una carta te unidad puede cambiar un clima esta funcion coloca un clon de la carta en la fila de cartas climas para evitar q se pueda colocar otro
+    //clima en esa fila mientras ella este
     public void UpdateCardWeather()
     {
         foreach (int ID in GameManager.instance.logicGame.PlayerOnTurn().W_cardstoshowinUI)

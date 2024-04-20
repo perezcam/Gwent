@@ -69,7 +69,7 @@ public class DeckManager: MonoBehaviour
         
             if (display != null)
             {
-                display.ApplyCardData(player.deck[i]);
+                display.ApplyCardData(player.deck.ElementAt(i));
             }
             player.CardInstances.Add(cardInstance);
         }
