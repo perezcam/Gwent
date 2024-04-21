@@ -23,6 +23,7 @@ public class Player:MonoBehaviour
     public Dictionary<int, GameObject> CardDictionary;
     public bool passed;
     public int rwin;
+    public Player enemy;
 
 
     // Método para inicializar el jugador.
@@ -39,6 +40,7 @@ public class Player:MonoBehaviour
     {
         this.playername = playername;
         this.faction = faction;
+        
     }
 
     public void Completehand(int numberofcards)
@@ -64,35 +66,61 @@ public class Player:MonoBehaviour
         row.Add(card);
         hand.Remove(card);
         board.cardPlayed = true;
-        UpdateCardsinGame();
-        UpdateCardsPower(row); 
+        UpdateCardsPower(); 
         UpdateCardWeather();
+        UpdateCardsinGame();
+        
         points.text = GameManager.instance.logicGame.PlayerOnTurn().totalforce.ToString();
+        enemy.points.text = GameManager.instance.logicGame.PlayerOnTurn().GetEnemy().totalforce.ToString();
+        
         GameManager.instance.logicGame.player1.cardstodelinUI = new List<int>();
         GameManager.instance.logicGame.player2.cardstodelinUI = new List<int>();
 
     }
 
     //Actualiza el card.attackvalue de cada carta en caso de que haya sido afectado por un efecto
-    public void UpdateCardsPower(List<GameObject> UIrow)
+    public void UpdateCardsPower()
     {
-        foreach (GameObject Card in UIrow)
+        List<GameObject> playerOnTurnRows = new List<GameObject>();
+        playerOnTurnRows.AddRange(board.attackRow);
+        playerOnTurnRows.AddRange(board.distantRow);
+        playerOnTurnRows.AddRange(board.siegeRow);
+
+        List<GameObject> enemyrows = new List<GameObject>();
+        enemyrows.AddRange(enemy.board.attackRow);
+        enemyrows.AddRange(enemy.board.distantRow);
+        enemyrows.AddRange(enemy.board.siegeRow);
+
+        
+        foreach (GameObject Card in playerOnTurnRows)
         {
-            int CardID = (Card.GetComponent<CardDisplay>()).ID;
+            int CardID = Card.GetComponent<CardDisplay>().ID;
             GameLogic.Card logicard = GameManager.instance.logicGame.PlayerOnTurn().PlayerCardDictionary[CardID];
             int UIattackvalue= int.Parse((Card.GetComponent<CardDisplay>()).attackvalue.text);
             int attackvalue = logicard.powerattack;
             if(UIattackvalue!=attackvalue)
             {
-                (Card.GetComponent<CardDisplay>()).attackvalue.text = attackvalue.ToString();
+                Card.GetComponent<CardDisplay>().attackvalue.text = attackvalue.ToString();
             }
-
         } 
+        foreach (GameObject Card in enemyrows)
+        {
+            int CardID = Card.GetComponent<CardDisplay>().ID;
+            GameLogic.Card logicard = GameManager.instance.logicGame.PlayerOnTurn().GetEnemy().PlayerCardDictionary[CardID];
+            int UIattackvalue= int.Parse((Card.GetComponent<CardDisplay>()).attackvalue.text);
+            int attackvalue = logicard.powerattack;
+            if(UIattackvalue!=attackvalue)
+            {
+                Card.GetComponent<CardDisplay>().attackvalue.text = attackvalue.ToString();
+            }
+        } 
+
+        playerOnTurnRows = new List<GameObject>();
+        enemyrows = new List<GameObject>();
     }
     //Actualiza las cartas en la interfaz del juego a partir de los cambios que ocurran en la logica
     public void UpdateCardsinGame()
     { 
-       Player enemy = (GameManager.instance.player1==this)? GameManager.instance.player2: GameManager.instance.player1; 
        foreach (int ID in GameManager.instance.logicGame.PlayerOnTurn().cardstodelinUI)
        {
             //Esto hace el efecto robar una carta
@@ -104,7 +132,7 @@ public class Player:MonoBehaviour
             {
                 try
                 {
-                    Destroy(CardDictionary[ID]);
+                    CardDictionary[ID].SetActive(false);
                 }
                 catch (Exception)
                 {
@@ -123,7 +151,7 @@ public class Player:MonoBehaviour
             try
             {
                 //Quitar destroy y poner funcion de mover al cementerio cuando este
-                Destroy(enemy.CardDictionary[ID]);
+                enemy.CardDictionary[ID].SetActive(false);
             }
             catch (Exception)
             {
@@ -133,7 +161,7 @@ public class Player:MonoBehaviour
     }
     
     
-    // Si una carta te unidad puede cambiar un clima esta funcion coloca un clon de la carta en la fila de cartas climas para evitar q se pueda colocar otro
+    // Si una carta de unidad puede cambiar un clima esta funcion coloca un clon de la carta en la fila de cartas climas para evitar q se pueda colocar otro
     //clima en esa fila mientras ella este
     public void UpdateCardWeather()
     {
@@ -183,7 +211,7 @@ public class Player:MonoBehaviour
     
     
     //revisar si funciona precupacion: referencia   
-    // public GameLogic.Card[] ConvertUIrowtoRow(List<GameObject> UIrowlist)
+    // public GameLogic.Card[] ConvertrowstoRow(List<GameObject> UIrowlist)
     // {
     //     Row UIrow = UIrowlist.ElementAt(0).GetComponentInParent<Row>();
     //     GameLogic.Card[] logicrow = null;

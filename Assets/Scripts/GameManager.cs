@@ -67,7 +67,9 @@ public class GameManager: MonoBehaviour
         player2.Completehand(10); 
         yield return new WaitUntil(() => player2.hand.Count >= 10);
         player2name.text=player2.playername;
-
+        
+        player1.enemy = player2;
+        player2.enemy = player1;
 
         playerOnTurn=player1;
         InitialChange(player1);

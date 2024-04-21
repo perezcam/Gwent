@@ -86,7 +86,7 @@ namespace GameLogic
             //Pone cada carta nueva bajo los efectos de las activas con efectos permanentes
             foreach (Card Card in cardsrow)
             {
-                if(Card.cardfunction.function == Functions.IncreasePowerRow)
+                if(Card.cardfunction.function == Functions.IncreasePowerRow && card.ID!=Card.ID)
                 {
                     card.powerattack += Card.powerattack;
                     totalforce += Card.powerattack;
@@ -99,12 +99,13 @@ namespace GameLogic
                 card.powerattack = 0;
             } 
             else if(cardsrow.First().On_W_ResetCardValues && card.cardfunction.function == Functions.IncreasePowerRow) 
-            {
+            {   // Elimina el efecto provocado por la carta y luego la elimina por ser tipo Increase
                 foreach (Card Card in cardsrow)
                 {
-                    Card.On_W_ReducePowerOfWeakCards = true;
+                    Card.owner.totalforce -= card.powerattack;
+                    Card.On_W_ResetCardValues = true;
                     Card.powerattack = Card.initialPowerAttack;
-                    cardstodelinUI.Add(Card.ID); 
+                    cardstodelinUI.Add(card.ID); 
                 }
             }
         }  

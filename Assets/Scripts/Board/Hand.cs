@@ -5,16 +5,24 @@ using UnityEngine.EventSystems;
 
 public class Hand : MonoBehaviour, IDropHandler
 {
+    public Player player; 
+    private Vector2 cardScale = new Vector2(0.0244f,0.0255f);
     public void OnDrop(PointerEventData eventData)
     {   
-        Debug.Log ("dropped");
-        GameObject droppedcard = DragHandler.itemDragging;
+        GameObject droppedCard = eventData.pointerDrag; 
+        DragHandler dragHandler = droppedCard.GetComponent<DragHandler>();
 
-        // Verifica si hay un objeto siendo arrastrado(DICEN Q ES NECESARIO Y PREVENTIVO PREGUNTARRRRR)
-        if (droppedcard != null)
+        if (droppedCard != null && droppedCard.gameObject.GetComponent<CardDisplay>().owner == player)
         {   
             // Cambia el padre del objeto arrastrado a este transform
-            droppedcard.transform.SetParent(transform);
+            droppedCard.transform.SetParent(transform);
+        }
+        else
+        {
+            droppedCard.transform.position = dragHandler.startPosition;
+            droppedCard.transform.SetParent(dragHandler.startParent, false);
+            droppedCard.transform.localScale = cardScale;
+            return;
         }
     }
 }
