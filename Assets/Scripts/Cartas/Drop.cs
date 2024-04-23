@@ -37,7 +37,6 @@ public class Drop : MonoBehaviour, IDropHandler
             if (droppedCard != null)
             {  
                  GameLogic.Card logicCard = GameManager.instance.logicGame.PlayerOnTurn().PlayerCardDictionary[droppedid];
-                 UnityEngine.Debug.Log(logicCard.row);
                 switch (row)
                 {   
                     case Row.attackRow: 
@@ -63,7 +62,9 @@ public class Drop : MonoBehaviour, IDropHandler
                     case Row.IsiegeRow:
                         GameManager.instance.logicGame.PlayerOnTurn().AddtoBattleField(droppedid,3);
                         player.AddCardTo(player.board.siegeRow,droppedCard);
-                        break;     
+                        break;   
+                    case Row.Null:
+                        return;  
                 }
                 
             }

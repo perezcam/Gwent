@@ -14,12 +14,14 @@ public class Board : MonoBehaviour
     public GameObject leaderSlot;
     public GameObject[] boostSlots = new GameObject[3];
     public GameObject deckcontainer;
+    public GameObject graveYard;
     public bool cardPlayed = true;
+    
 
     public void Update()
     { 
         //Para que el jugador pueda jugan una sola carta
-        if (cardPlayed)
+        if (cardPlayed || deckcontainer.GetComponentInChildren<CardDisplay>().owner.passed)
         {
             foreach (Transform cardinhand in handcontainer.transform)
             {

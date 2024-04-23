@@ -105,6 +105,7 @@
     <Compile Include="Assets/TextMesh Pro/Examples &amp; Extras/Scripts/Benchmark01.cs" />
     <Compile Include="Assets/TextMesh Pro/Examples &amp; Extras/Scripts/TextMeshSpawner.cs" />
     <Compile Include="Assets/TextMesh Pro/Examples &amp; Extras/Scripts/VertexZoom.cs" />
+    <Compile Include="Assets/Scripts/Cartas/CardDropHandler.cs" />
     <Compile Include="Assets/Scripts/GameManager.cs" />
     <Compile Include="Assets/Scripts/Board/BoardManager.cs" />
     <Compile Include="Assets/TextMesh Pro/Examples &amp; Extras/Scripts/Benchmark02.cs" />
@@ -119,8 +120,9 @@
     <Compile Include="Assets/Scripts/Logica/LogicGameManager.cs" />
     <Compile Include="Assets/Scripts/Logica/Player.cs" />
     <Compile Include="Assets/TextMesh Pro/Examples &amp; Extras/Scripts/CameraController.cs" />
+    <Compile Include="Assets/Scripts/SETGAMESCRIPTS/SetPlayer.cs" />
+    <Compile Include="Assets/Scripts/SETGAMESCRIPTS/FactionButton.cs" />
     <Compile Include="Assets/TextMesh Pro/Examples &amp; Extras/Scripts/Benchmark03.cs" />
-    <Compile Include="Assets/Scripts/SETGAMESCRIPTS/FactionSelection.cs" />
     <Compile Include="Assets/Scripts/Cartas/DeckManager.cs" />
     <Compile Include="Assets/Scripts/SETGAMESCRIPTS/SetGameScene.cs" />
     <Compile Include="Assets/Scripts/Cartas/DropWeather.cs" />

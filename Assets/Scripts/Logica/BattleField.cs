@@ -17,99 +17,40 @@ namespace GameLogic
         public  List<Card> distantrow= new List<Card>();
         public  List<Card> siegerow= new List<Card>();
         public  List<Card> graveyard= new List<Card>();
-
-      //Abajo separe esa funcion en tres partes para poder usarlas en las funciones 
-      //Si al final las uso la suigiente hay q cambiarla para q solo llame a las tres funciones
+        // On_W = 0 no hay clima, On_W =1 clima tipo 1 , On_W = 2 clima tipo 2
+        public int On_W_attackrow;
+        public int On_W_distantrow;
+        public int On_W_siegerow;
      
-       public void SendtoGraveyard()
-     {
-            int index=0; 
-            for (int i = 0; i < 25; i++)
-            {
-               if (graveyard[i]!=null)
-               index++;
-            }
-            for (int i = 0; i < 9; i++)
-            {
-                if(contactrow[i]!=null)
-                {
-                     graveyard[index]=contactrow[i];
-                     index++;
-                     contactrow[i]=null!;
-                }
-                if(distantrow[i]!=null)
-                {
-                     graveyard[index]=distantrow[i];
-                     index++;
-                     contactrow[i]=null!;
-                }
-                if(siegerow[i]!=null)
-                {
-                     graveyard[index]=siegerow[i];
-                     index++;
-                     contactrow[i]=null!;
-               }
-
-          } 
-     }
-
-       public void SendCRowtoGraveyard()
+       public List<Card>[] CardsonBattleField()
+      {
+          List <Card>[] totalBattleField = new List<Card>[3];
+          totalBattleField[0] = contactrow;
+          totalBattleField[1] = distantrow;
+          totalBattleField[2] = siegerow;
+          //Restaura los climas en caso de existir a su posicion original
+           On_W_attackrow = 0;
+           On_W_distantrow = 0;
+           On_W_siegerow = 0;
+          return totalBattleField;
+      } 
+       public void SetWeather (List<Card> row, int type)
        {
-           int index=0; 
-            for (int i = 0; i < 25; i++)
-            {
-               if (graveyard[i]!=null)
-               index++;
-            }
-            for (int i = 0; i < 9; i++)
-            {
-                if(contactrow[i]!=null)
-                {
-                     graveyard[index]=contactrow[i];
-                     index++;
-                     contactrow[i]=null!;
-                }
-            }
+          if(row == contactrow)
+               On_W_attackrow = type;
+          else if (row==distantrow)
+               On_W_distantrow = type;
+          else
+               On_W_siegerow = type;
        }
-       public void SendDRowtoGraveyard()
+       public int GetWeather (List<Card> row)
        {
-          int index=0; 
-            for (int i = 0; i < 25; i++)
-            {
-               if (graveyard[i]!=null)
-               index++;
-
-            }
-            
-            for (int i = 0; i < 9; i++)
-            {
-               
-                if(distantrow[i]!=null)
-                {
-                     graveyard[index]=distantrow[i];
-                     index++;
-                     contactrow[i]=null!;
-                }
-            }
+          if(row == contactrow)
+              return On_W_attackrow ;
+          else if (row==distantrow)
+              return On_W_distantrow;
+          else
+              return On_W_siegerow;
        }
-       public void SendSRowtoGraveyard()
-       {
-            int index=0; 
-            for (int i = 0; i < 25; i++)
-            {
-               if (graveyard[i]!=null)
-               index++;
-            }
-            for (int i = 0; i < 9; i++)
-            {
-                if(siegerow[i]!=null)
-                {
-                     graveyard[index]=siegerow[i];
-                     index++;
-                     contactrow[i]=null!;
-                }
-
-            } 
-       }  
     }    
 }

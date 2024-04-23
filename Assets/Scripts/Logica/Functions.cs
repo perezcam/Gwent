@@ -45,13 +45,14 @@ namespace GameLogic
         //Funcion clima 1: todas las cartas con poder menor o igual que 4 baja a 0;
         public static void W_ReducePowerOfWeakCards(Card card, List<Card>row)
         {
-            card.On_W_ReducePowerOfWeakCards = true;
             Player enemy = card.owner.GetEnemy();
             List<Card> enemyrow = enemy.GetRow(card.row);
-            card.On_W_ReducePowerOfWeakCards = true;
+            card.owner.battleField.SetWeather(row,1);
+            enemy.battleField.SetWeather(enemyrow,1);
+            card.owner.battleField.SetWeather(row,1);
+            
             foreach (Card Card in row)
             {
-                Card.On_W_ReducePowerOfWeakCards = true;
                 if(Card!=null && Card.powerattack<4)
                 {
                     Card.owner.totalforce -= Card.powerattack;
@@ -61,8 +62,7 @@ namespace GameLogic
 
             foreach (Card Card in enemyrow)
             {
-                Card.On_W_ReducePowerOfWeakCards = true;
-               if(Card!=null && Card.powerattack<4)
+               if(Card!=null && Card.powerattack<=4)
                 {
                     Card.owner.totalforce -= Card.powerattack;
                     Card.powerattack = 0;
@@ -74,45 +74,60 @@ namespace GameLogic
                 card.owner.W_cardstoshowinUI.Add(card.ID);    
         }
         
-        //Elimina todas las cartas de tipo Increase y el incremento provocado por ellas y ademas si usa otro Increase mientas ella este activa lo elimina
+        //Clima tipo 2:Elimina todas las cartas de tipo Increase y el incremento provocado por ellas y ademas si usa otro Increase mientas ella este activa lo elimina
         public static void W_ResetCardValues(Card card,List<Card> row)
         {
-            card.On_W_ResetCardValues = true;
+            card.owner.totalforce += card.powerattack;
             Player enemy = card.owner.GetEnemy();
             List<Card> enemyrow = enemy.GetRow(card.row);
-            card.On_W_ResetCardValues = true;
+            card.owner.battleField.SetWeather(row,2);
+            enemy.battleField.SetWeather(enemyrow,2);
+
+            List<Card> cardtoremove = new List<Card>();
 
             foreach (Card Card in row)
             {
-                Card.On_W_ResetCardValues = true;
                 if (Card != null)
                 {
                      Card.owner.totalforce -= Card.powerattack - Card.initialPowerAttack;
                      Card.powerattack = Card.initialPowerAttack;
-                     //elimina todas las cartas con poder IncreasePowerRow en la fila
+                      //encuentra todas las cartas con poder IncreasePowerRow en la fila
                      if(Card.cardfunction.function == IncreasePowerRow)
                      {
                         card.owner.cardstodelinUI.Add(Card.ID);
-                        row.Remove(card);
+                        cardtoremove.Add(card);
                      }
                 }
-            }    
+            }  
+            //elimina todas las cartas con poder IncreasePowerRow en la fila
+            foreach (Card removeCard in cardtoremove)
+            {
+               row.Remove(removeCard);
+            }
+
+            cardtoremove = new List<Card>();
+
              foreach (Card Card in enemyrow)
             {
-                Card.On_W_ResetCardValues = true;
                 if (Card != null)
                 {
                      Card.owner.totalforce -= (Card.powerattack - Card.initialPowerAttack);
                      Card.powerattack = Card.initialPowerAttack;
-                     //elimina todas las cartas con poder IncreasePowerRow en la fila
+                     //encuentra todas las cartas con poder IncreasePowerRow en la fila
                      if(Card.cardfunction.function == IncreasePowerRow)
                      {
                         enemy.cardstodelinUI.Add(Card.ID);
                         enemy.totalforce -= Card.powerattack;
-                        enemyrow.Remove(Card);
+                        cardtoremove.Add(Card);
                      }
                 }
             }   
+            //elimina todas las cartas con poder IncreasePowerRow en la fila
+            foreach (Card removeCard in cardtoremove)
+            {
+                enemyrow.Remove(removeCard);
+            }
+
             if(card.powerattack!=0)
                 card.owner.W_cardstoshowinUI.Add(card.ID);
         }    
@@ -123,42 +138,39 @@ namespace GameLogic
             card.owner.totalforce += card.powerattack;
             Player enemy = card.owner.GetEnemy();
             List<Card> enemyrow = enemy.GetRow(card.row);
+            Card weatherCard = null;
 
             foreach (Card Card in row)
-            {   //Identifica la carta clima en la fila y la elimina
-                if(Card != null && row.First().On_W_ReducePowerOfWeakCards)
+            {   //Identifica la carta clima en la fila
+                if(Card != null && (Card.owner.battleField.GetWeather(row) == 1 || Card.owner.battleField.GetWeather(row)==2))
                 {
-                    Card.On_W_ReducePowerOfWeakCards = false;
-                    if(Card.cardfunction.function == W_ReducePowerOfWeakCards)
-                    {
-                        card.owner.cardstodelinUI.Add(Card.ID);
-                        RemuveSpecialCardsEfects(Card,row);
-                        row.Remove(Card);
-                    }
-                }
-                else if(Card!=null &&  row.First().On_W_ReducePowerOfWeakCards )
-                {
-                    Card.On_W_ResetCardValues = false;
-                    if(Card.cardfunction.function == W_ResetCardValues)
-                    {
-                        card.owner.cardstodelinUI.Add(Card.ID); 
-                        RemuveSpecialCardsEfects(Card,row);
-                        row.Remove(Card);
-                    }
+    
+                    card.owner.battleField.SetWeather(row,0);
+                    card.owner.cardstodelinUI.Add(Card.ID); 
+                    RemuveSpecialCardsEfects(Card,row);
+                    weatherCard = Card;
+                
                 }
             }
+            //elimina la carta clima
+            if (weatherCard != null)
+                row.Remove(weatherCard);
+            //elimina la referencia anterior
+            weatherCard = null;
 
             foreach (Card Card in enemyrow)
-            {   //Identifica la carta clima en la fila y la elimina
-                if(Card != null && enemyrow.First().On_W_ReducePowerOfWeakCards)
+            {   //Identifica la carta clima en la fila de enemigo y la elimina
+                if(Card != null && (enemy.battleField.GetWeather(enemyrow) == 1 || enemy.battleField.GetWeather(enemyrow)==2) )
                 {
-                    Card.On_W_ReducePowerOfWeakCards = false;
-                }
-                else if(Card!=null &&  enemyrow.First().On_W_ReducePowerOfWeakCards )
-                {
-                    Card.On_W_ResetCardValues = false;
+                    enemy.battleField.SetWeather(enemyrow,0);
+                    Card.owner.cardstodelinUI.Add(Card.ID);
+                    RemuveSpecialCardsEfects(Card,enemyrow);
+                    weatherCard = Card;
                 }
             }
+            //elimina la carta clima
+            if (weatherCard != null)
+                row.Remove(weatherCard);
         }
 
         // Elimina la carta con mas poder del enemigo
@@ -273,8 +285,8 @@ namespace GameLogic
             card.owner.totalforce += card.powerattack;
             BattleField owner = card.owner.battleField;
             BattleField enemy = card.owner.GetEnemy().battleField;
-            List<Card>[]  Rows = {owner.contactrow,owner.distantrow,owner.siegerow,
-                                  enemy.contactrow, enemy.distantrow, enemy.siegerow};
+            List<Card>[]  Rows = {enemy.contactrow, enemy.distantrow, enemy.siegerow,
+                                  owner.contactrow,owner.distantrow,owner.siegerow};
             List<Card> targetrow = new List<Card>();
             int index = -1;
             int min = 10;
@@ -345,20 +357,26 @@ namespace GameLogic
             card.owner.totalforce+= card.powerattack;
         }
 
+        //Carta senuelo: permite cambiar una carta de valor 0 por otra que este sobre la mesa desactivando los efectos ocasionados por la misma al existir
+        public static void Decoy(Card card , List<Card> row)
+        {
+            RemuveSpecialCardsEfects(card,row);
+        }
+
         // Recursivamente busca la carta con mayor(value=1) o menor(value=0) poder de ataque que no sea de incremento o clima
         private static Card FindCardByPower(List<Card> enemyBattleField, int value)
         {  
+            //Caso base
+            if(enemyBattleField.Count()==0)
+            {
+                return null;
+            }
             Card card;
             if(value == 1)
                 card = enemyBattleField.OrderByDescending((card)=> card.powerattack).ToList().ElementAt(0); 
             else
                 card = enemyBattleField.OrderBy((card)=> card.powerattack).ToList().ElementAt(0); 
             
-            //Caso base
-            if(enemyBattleField.Count()==0)
-            {
-                return null;
-            }
             if (card.type==1)
             {
                 enemyBattleField.Remove(card);
@@ -381,7 +399,7 @@ namespace GameLogic
                 }
                 else
                 {
-                    BeforeW_ResetCardValues(card,row);
+                    card.owner.battleField.SetWeather(row,0);
                 }
             }
             else
@@ -391,7 +409,7 @@ namespace GameLogic
         {
             foreach (Card Card in row)
             {
-                if ((Card.type != 1 || Card.cardfunction.function == IncreasePowerRow) && card.ID != Card.ID )
+                if ((Card.type != 1 || Card.cardfunction.function == IncreasePowerRow) && card.ID != Card.ID) 
                 {
                     Card.owner.totalforce -= card.powerattack;
                     Card.powerattack -= card.powerattack;
@@ -399,19 +417,12 @@ namespace GameLogic
             }
         }
 
-        private static void BeforeW_ResetCardValues(Card card, List<Card> row)
-        {
-            foreach (Card Card in row)
-            {
-                Card.On_W_ResetCardValues = false;
-            }        
-        }
 
         private static void BeforeW_ReducePowerOfWeakCards(Card card, List<Card> row)
         {   //Si la carta tiene poder original menor que 4 le incrementa al poder actual de la carta su poder actual
             foreach (Card Card in row)
             {
-                if(card.ID != Card.ID && Card.initialPowerAttack<4)
+                if(card.ID != Card.ID && Card.initialPowerAttack<=4)
                 {
                     Card.powerattack += Card.initialPowerAttack;
                     Card.owner.totalforce += Card.initialPowerAttack; 

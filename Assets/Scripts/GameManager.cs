@@ -10,6 +10,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.XR;
+using System.Threading.Tasks;
 public class GameManager: MonoBehaviour
 {
     public GameObject WeatherRow;
@@ -17,6 +18,7 @@ public class GameManager: MonoBehaviour
     public TextMeshProUGUI player2name;
     public Player player1;
     public Player player2;
+    private Player winner;
     public DeckManager deckManager;
     public PanelFader blurPanel;
     public int currenTurn;
@@ -44,7 +46,7 @@ public class GameManager: MonoBehaviour
         blurPanel.gameObject.SetActive(false);
         CardLists cardLists = new CardLists();
         deckManager = new DeckManager(cardLists);
-        logicGame = new LogicGameManager(SetGameScene.instance.name1, SetGameScene.instance.faction1,SetGameScene.instance.name2, SetGameScene.instance.faction2);
+        logicGame = new LogicGameManager(SetGameScene.instance.gameData.name1, SetGameScene.instance.gameData.faction1,SetGameScene.instance.gameData.name2, SetGameScene.instance.gameData.faction1);
         logicGame.currenTurn=0;
         InitializeGame();
     }
@@ -56,13 +58,13 @@ public class GameManager: MonoBehaviour
 
     private IEnumerator InitializePlayers()
     {
-        player1.Initialize(SetGameScene.instance.name1, SetGameScene.instance.faction1);
+        player1.Initialize(SetGameScene.instance.gameData.name1, SetGameScene.instance.gameData.faction1);
         deckManager.InitializeDeck(player1);
         player1.Completehand(10);  
         yield return new WaitUntil(() => player1.hand.Count >= 10);
         player1name.text= player1.playername;
 
-        player2.Initialize(SetGameScene.instance.name2, SetGameScene.instance.faction2);
+        player2.Initialize(SetGameScene.instance.gameData.name2, SetGameScene.instance.gameData.faction2);
         deckManager.InitializeDeck(player2);
         player2.Completehand(10); 
         yield return new WaitUntil(() => player2.hand.Count >= 10);
@@ -85,63 +87,104 @@ public class GameManager: MonoBehaviour
 
    public void PassTurn()
    {
-        currenTurn ++;
-        logicGame.currenTurn = currenTurn;
-    
-        //Desactiva la posibilidad de hacer Drag del jugador que paso turno
-        playerOnTurn.board.cardPlayed=true;
+        playerOnTurn.passed = true;
         
-        //Setea el nuevo jugador del turno
-        playerOnTurn = (currenTurn%2==0)? player1 : player2;
-        
-        //permite que la logica sepa que jugador esta en su turno
-        SetLogicTurn();
-        
-        //Hace el cambio de dos cartas inicial
-        if(currentRound==0 && currenTurn==1)
+        if (player1.passed && !player1.board.cardPlayed && player2.passed && !player2.board.cardPlayed )
+            ChangeRound();
+        else
         {
-            InitialChange(player2);
-            logicGame.player2.SetLogicDeck(CardDatatoInt(player2.deck));
-            logicGame.player2.SetLogicHand(GameObjecttoInt(player2.hand));
+            currenTurn ++;
+            logicGame.currenTurn = currenTurn;
+            Debug.Log(currentRound + "Esta es la ronda actual");
+            //Setea el nuevo jugador del turno
+            playerOnTurn = (currenTurn%2==0)? player1 : player2;
+            playerOnTurn.passed = false;
+            
+            //permite que la logica sepa que jugador esta en su turno
+            SetLogicTurn();
+            
+            //Hace el cambio de dos cartas inicial
+            if(currentRound==0 && currenTurn==1)
+            {
+                InitialChange(player2);
+                logicGame.player2.SetLogicDeck(CardDatatoInt(player2.deck));
+                logicGame.player2.SetLogicHand(GameObjecttoInt(player2.hand));
+            }
+            //Permite que el jugador actual juegue una carta     
+            playerOnTurn.board.cardPlayed=false;
+            Debug.Log("Turno pasado!");   
         }
-        //Permite que el jugador actual juegue una carta     
-        playerOnTurn.board.cardPlayed=false;
-        Debug.Log("Turno pasado!");   
    }
-    public void PassRound()
-    {
-        if (currentRound >= 2 && (player1.rwin != player2.rwin))
+    public void ChangeRound()
+    {  
+        SetRoundWinner();
+        if (player1.rwin == player2.rwin && currentRound ==2)
         {
-            Player winner = player1.rwin>player2.rwin ? player1 : player2;
-            Debug.Log("El ganador es " + winner.name );
+            Debug.Log("empate");            
+        }     
+        else if (currentRound>=1 && player1.rwin != player2.rwin)
+        {
+            winner = player1.rwin > player2.rwin ? player1 : player2;
+            Debug.Log(winner.playername + "Es el ganador"); 
+            blurPanel.gameObject.SetActive(true);
+        }  
+        else
+        { //Jugar otra ronda
+                player1.board.cardPlayed = true;
+                player2.board.cardPlayed = true;
+                logicGame.player1.totalforce = 0;
+                logicGame.player2.totalforce = 0;
+                player1.points.text = "0";
+                player2.points.text = "0";
+                logicGame.player1.SendCardstoGraveyard();
+                player1.DeleteCards(logicGame.player1.cardstodelinUI,player1);
+                logicGame.player2.SendCardstoGraveyard();
+                player2.DeleteCards(logicGame.player2.cardstodelinUI,player2);
+                currentRound ++;
+                player1.Completehand(player1.hand.Count()+2);
+                logicGame.player1.hand = new List<Card>();
+                logicGame.player1.SetLogicHand(GameObjecttoInt(player1.hand));
+                player2.Completehand(player2.hand.Count()+2);
+                logicGame.player2.hand = new List<Card>();
+                logicGame.player2.SetLogicHand(GameObjecttoInt(player2.hand));
+                player1.passed = false;
+                player2.passed = false;
+                playerOnTurn.board.cardPlayed = false;
         }
-        else if(player1.passed && player2.passed)
+        //Falta eliminar el clon al hacer una carta clima desaparecer
+        
+    }
+    public  void SetRoundWinner()
+    {
+        if(logicGame.player1.totalforce>logicGame.player2.totalforce)
         {
-            playerOnTurn.board.cardPlayed = true;
+            player1.rwin ++;
+            playerOnTurn = player1;
             currenTurn = 0;
-            currentRound ++;
-            playerOnTurn = logicGame.player1.totalforce>= logicGame.player2.totalforce ? player1: player2;
-            playerOnTurn.board.cardPlayed = false;
-            playerOnTurn.rwin ++;
-            while(player1.hand.Count()<=10)
-            {
-                player1.Completehand(2);
-            }
-
-            while(player2.hand.Count()<=10)
-            {
-                player2.Completehand(2);
-            }
-            player1.Completehand(2);
+            logicGame.currenTurn = 0;
+            SetLogicTurn();
+            
+        }
+        else if (logicGame.player1.totalforce==logicGame.player2.totalforce)
+        {
+            player1.rwin ++;
+            player2.rwin ++;
+            playerOnTurn = player1;
+            currenTurn = 0;
+            logicGame.currenTurn = 0;
+            SetLogicTurn();
         }
         else
         {
-            playerOnTurn.passed=true;
-            Debug.Log("Ronda pasada!");
+            player2.rwin ++;
+            playerOnTurn = player2;
+            currenTurn = 1;
+            logicGame.currenTurn = 1;
+            SetLogicTurn();
         }
-
     }
-    
+   
+ 
     public static List<int> CardDatatoInt (List<CardData> list)
     {
         List<int> CardsID = new List<int>(); 

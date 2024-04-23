@@ -21,16 +21,16 @@ namespace GameLogic
         public static Card Historia = new Card("Historia Reiss", 5, 13, null, Functions.StealCard, 3, 0);
         public static Card Jean = new Card("Jean Kirstein", 6, 14, null, Functions.AttackMultiplier, 1, 0);
         public static Card Levi = new Card("Levi Ackerman", 9, 15, null, Functions.CleanRow, 1, 0);
-        public static Card Magaly = new Card("Magaly", 4, 16, null, Functions.NullFunction, 2, 0);
+        public static Card Magaly = new Card("Magaly", 4, 16, null, Functions.W_ResetCardValues, 2, 0);
         public static Card ManiobraDistraccion = new Card("Maniobra de Distracción", 0, 17, null, Functions.W_ResetCardValues, 2, 1);
         public static Card Mikasa = new Card("Mikasa Ackerman", 8, 18, null, Functions.AvaragedPower, 1, 0);
         public static Card Nanaba = new Card("Nanaba", 4, 19, null, Functions.DelWeakestCard, 2, 0);
         public static Card Petra = new Card("Petra Ral", 4, 20, null, Functions.StealCard, 2, 0);
         public static Card RefuerzosTrost = new Card("Refuerzos de Trost", 1, 21, null, Functions.IncreasePowerRow, 2, 1);
         public static Card Sasha = new Card("Sasha Blouse", 6, 22, null, Functions.DelPowerfullCard, 2, 0);
-        public static Card Takami = new Card("Takami", 3, 23, null, Functions.NullFunction, 3, 0);
+        public static Card Takami = new Card("Takami", 3, 23, null, Functions.W_ReducePowerOfWeakCards, 3, 0);
         public static Card Ymir = new Card("Ymir", 5, 24, null, Functions.IncreasePowerRow, 1, 0);
-        public static Card Marco = new Card("Marco Bott", 4, 25, null, Functions.NullFunction, 3, 0);
+        public static Card Marco = new Card("Marco Bott", 0, 25, null, Functions.NullFunction, 3, 3);
 
         //Titans Deck
         public static Card TitanBestia = new Card("Titán Bestia", 7, 26, null, Functions.IncreasePowerRow, 3, 0);

@@ -31,20 +31,19 @@ public class DropWeather : MonoBehaviour, IDropHandler
              
              if (droppedCard != null)
             {  //Revisar si por otro efecto se afecta una carta clima por la logica al agregarlo todo junto
-                GameLogic.Card logicCard = GameManager.instance.logicGame.PlayerOnTurn().PlayerCardDictionary[droppedid];
-                GameLogic.BattleField battleField = GameManager.instance.logicGame.PlayerOnTurn().battleField;
+                
                 switch (row)
                 {   
                     case Row.W_attack:
-                        GameManager.instance.logicGame.PlayerOnTurn().ActiveCard(logicCard,battleField.contactrow);
+                        GameManager.instance.logicGame.PlayerOnTurn().AddtoBattleField(droppedid,1);
                         cardOwner.AddCardTo(cardOwner.board.attackRow,droppedCard);
                         break;
                     case Row.W_distant:
-                        GameManager.instance.logicGame.PlayerOnTurn().ActiveCard(logicCard,battleField.distantrow);
+                        GameManager.instance.logicGame.PlayerOnTurn().AddtoBattleField(droppedid,2);
                         cardOwner.AddCardTo(cardOwner.board.distantRow,droppedCard);
                         break;
                     case Row.W_siege:
-                        GameManager.instance.logicGame.PlayerOnTurn().ActiveCard(logicCard,battleField.siegerow);
+                        GameManager.instance.logicGame.PlayerOnTurn().AddtoBattleField(droppedid,3);
                         cardOwner.AddCardTo(cardOwner.board.siegeRow,droppedCard);
                         break;     
                 }

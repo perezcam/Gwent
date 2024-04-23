@@ -52,6 +52,19 @@ namespace GameLogic
                 hand.Add(card);
             }
         }
+        public void SendCardstoGraveyard()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                foreach (Card card in battleField.CardsonBattleField()[i])
+                {
+                    cardstodelinUI.Add(card.ID);
+                }
+            }   
+            battleField.contactrow = new List<Card>();
+            battleField.distantrow = new List<Card>();
+            battleField.siegerow = new List<Card>();
+        }
         public void AddtoBattleField(int cardID, int row)
         {
             Card card = PlayerCardDictionary[cardID];
@@ -91,39 +104,32 @@ namespace GameLogic
                     card.powerattack += Card.powerattack;
                     totalforce += Card.powerattack;
                 }
-            }
-            if(cardsrow.First().On_W_ReducePowerOfWeakCards && card.powerattack<4)
+            }  
+            if(card.owner.battleField.GetWeather(cardsrow)==1 && card.powerattack<=4)
             {
-                card.On_W_ReducePowerOfWeakCards = true;
                 totalforce -= card.powerattack;
                 card.powerattack = 0;
             } 
-            else if(cardsrow.First().On_W_ResetCardValues && card.cardfunction.function == Functions.IncreasePowerRow) 
+            else if(card.owner.battleField.GetWeather(cardsrow)==2 && card.cardfunction.function == Functions.IncreasePowerRow) 
             {   // Elimina el efecto provocado por la carta y luego la elimina por ser tipo Increase
                 foreach (Card Card in cardsrow)
                 {
                     Card.owner.totalforce -= card.powerattack;
-                    Card.On_W_ResetCardValues = true;
-                    Card.powerattack = Card.initialPowerAttack;
-                    cardstodelinUI.Add(card.ID); 
+                    Card.powerattack -= card.powerattack;
                 }
+                cardstodelinUI.Add(card.ID); 
             }
         }  
 
         public void ActiveCard(Card card, List<Card> row)
         {
             //Verifica si hay alguna carta clima en la fila para en caso de existir no activar a la actual
-            if (card.powerattack != 0 && card.cardfunction.function == Functions.W_ReducePowerOfWeakCards && row.First().On_W_ReducePowerOfWeakCards)
+            if ((card.cardfunction.function == Functions.W_ReducePowerOfWeakCards || card.cardfunction.function == Functions.W_ResetCardValues) && card.owner.battleField.GetWeather(row)!=0)
             {
                 card.owner.totalforce += card.powerattack;
                 return;
             }
-            if (card.powerattack != 0 && card.cardfunction.function == Functions.W_ResetCardValues && row.First().On_W_ResetCardValues)
-            {
-                card.owner.totalforce += card.powerattack;
-                return;
-            }
-                card.cardfunction.function(card,row);
+            card.cardfunction.function(card,row);
         }
         
         public Player GetEnemy()

@@ -11,7 +11,7 @@ public class NameLabel : MonoBehaviour
     public TMP_InputField inputField; 
     public TextMeshProUGUI displayNameText; 
     private bool isWriting = false; 
-    public static bool isWrited;
+
 
     void Update()
     {
@@ -23,18 +23,17 @@ public class NameLabel : MonoBehaviour
             }
             inputField.ActivateInputField(); 
         }
+    
     }
     public void deselectInput()
     {
         if(displayNameText.text.Length != 1)
         {
             isWriting = false;
-            isWrited=true;
         }
         else
         {
             isWriting = true;
-            isWrited=false;
         }
     }
 

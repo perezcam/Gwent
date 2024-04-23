@@ -225,7 +225,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!114 &8378620987911830198
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -246,6 +246,7 @@ MonoBehaviour:
   attackvalue: {fileID: 9005430868405587520}
   row: 0
   ID: 0
+  owner: {fileID: 0}
 --- !u!114 &1592237218758848184
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -297,6 +298,7 @@ MonoBehaviour:
   attackvalue: {fileID: 0}
   row: 0
   ID: 0
+  owner: {fileID: 0}
 --- !u!222 &-8462635976215030531
 CanvasRenderer:
   m_ObjectHideFlags: 0

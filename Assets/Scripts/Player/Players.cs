@@ -24,7 +24,8 @@ public class Player:MonoBehaviour
     public bool passed;
     public int rwin;
     public Player enemy;
-
+    private Vector2 cardScale = new Vector2(0.01303835f,0.01362615f);
+    private List<GameObject> cardClones = new List<GameObject>();
 
     // Método para inicializar el jugador.
     public void Awake()
@@ -49,7 +50,7 @@ public class Player:MonoBehaviour
     }
     private IEnumerator MoveCardsSequentially(List<GameObject> cards,int value)
     {
-        while(hand.Count<value)
+        while(hand.Count()<value && hand.Count()<10)
         {
             cardMover2D.MoveCardToHand(cards[0]);
             while (Vector3.Distance(cards[0].transform.position, board.handcontainer.transform.position) > 0.01f)
@@ -62,7 +63,8 @@ public class Player:MonoBehaviour
         }  
     }
     public void AddCardTo(List<GameObject> row,GameObject card)
-    { 
+    {   
+        card.AddComponent<CardDropHandler>();
         row.Add(card);
         hand.Remove(card);
         board.cardPlayed = true;
@@ -73,8 +75,7 @@ public class Player:MonoBehaviour
         points.text = GameManager.instance.logicGame.PlayerOnTurn().totalforce.ToString();
         enemy.points.text = GameManager.instance.logicGame.PlayerOnTurn().GetEnemy().totalforce.ToString();
         
-        GameManager.instance.logicGame.player1.cardstodelinUI = new List<int>();
-        GameManager.instance.logicGame.player2.cardstodelinUI = new List<int>();
+        
 
     }
 
@@ -121,43 +122,17 @@ public class Player:MonoBehaviour
     //Actualiza las cartas en la interfaz del juego a partir de los cambios que ocurran en la logica
     public void UpdateCardsinGame()
     { 
-       foreach (int ID in GameManager.instance.logicGame.PlayerOnTurn().cardstodelinUI)
-       {
-            //Esto hace el efecto robar una carta
-            if (ID==2024)
-            {
-                Completehand(hand.Count+1);
-            }
-            else
-            {
-                try
-                {
-                    CardDictionary[ID].SetActive(false);
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
-            }                
-       } 
-
-        foreach (int ID in GameManager.instance.logicGame.PlayerOnTurn().GetEnemy().cardstodelinUI)
-       {
-              if (ID==2024)
-            {
-                Completehand(hand.Count+1);
-            }
-            Debug.Log(ID);
-            try
-            {
-                //Quitar destroy y poner funcion de mover al cementerio cuando este
-                enemy.CardDictionary[ID].SetActive(false);
-            }
-            catch (Exception)
-            {
-                throw;
-            }   
-       } 
+       
+        if ( GameManager.instance.logicGame.PlayerOnTurn().cardstodelinUI.Contains(2024))
+        {
+            Completehand(hand.Count+1);
+            GameManager.instance.logicGame.PlayerOnTurn().cardstodelinUI.Remove(2024);
+        }
+                          
+        DeleteCards(GameManager.instance.logicGame.PlayerOnTurn().cardstodelinUI,this);
+        DeleteCards(GameManager.instance.logicGame.PlayerOnTurn().GetEnemy().cardstodelinUI,enemy);  
+        GameManager.instance.logicGame.player1.cardstodelinUI = new List<int>();
+        GameManager.instance.logicGame.player2.cardstodelinUI = new List<int>();
     }
     
     
@@ -176,64 +151,72 @@ public class Player:MonoBehaviour
                 throw;
             }
         }
+        GameManager.instance.logicGame.player1.W_cardstoshowinUI = new List<int>();
+        GameManager.instance.logicGame.player2.W_cardstoshowinUI = new List<int>();
     }
 
     public void InstantiateW_Card(GameObject card)
     {
         GameObject WeatherRow =  GameManager.instance.WeatherRow;
-        Transform parent;
+        Transform parent = WeatherRow.transform;
         switch (card.GetComponent<CardDisplay>().row)
         {
             case Row.attackRow:
-                parent = WeatherRow.GetComponentAtIndex(0).transform;
+                parent = parent.transform.GetChild(0).transform;
                 break;
             case Row.distantRow:
-                parent = WeatherRow.GetComponentAtIndex(1).transform;
+                parent = parent.transform.GetChild(1).transform;
                 break;
             case Row.siegeRow:
-                parent = WeatherRow.GetComponentAtIndex(2).transform;
-                break;
-            default:
-                parent = WeatherRow.transform;
+                parent = parent.transform.GetChild(2).transform;;
                 break;
         }
+        GameObject cardclone = Instantiate(card, parent);
+        cardclone.transform.SetParent(parent);
+        cardclone.transform.localScale = cardScale;
+        cardclone.transform.position = parent.position;
+        parent.gameObject.GetComponent<DropWeather>().itemsDropped.Add(cardclone);
+        cardClones.Add(cardclone);
+    }
+    public void DeleteCards(List <int> cardid,Player player)
+    {  
+        List<GameObject> cardstodestroy = new List<GameObject>();
+        List<GameObject> cardsclonesdestroy = new List<GameObject>();
         
-        card.transform.SetParent(parent);
-        card.transform.position = transform.position;
-        // droppedCard.transform.localScale = cardScale;
+        foreach (int ID in cardid)
+        {
+           cardstodestroy.Add(player.CardDictionary[ID]);
+           foreach(GameObject cardclone in cardClones)
+           {
+                if(ID == cardclone.GetComponent<CardDisplay>().ID)
+                {
+                    cardsclonesdestroy.Add(cardclone);
+                }
+           }
+        }
+        foreach (GameObject card in cardstodestroy)
+        {
+            if (player.board.attackRow.Contains(card))
+                player.board.attackRow.Remove(card);
+            else if (player.board.distantRow.Contains(card))
+                player.board.distantRow.Remove(card);
+            else 
+                player.board.siegeRow.Remove(card);
+            
+            card.transform.SetParent(player.board.graveYard.transform);
+            card.transform.position = player.board.graveYard.transform.position;
+            card.transform.localScale = cardScale;
+            
+            card.SetActive(false);
+        }
+        foreach (GameObject cardclone in cardsclonesdestroy)
+        {
+            cardclone.SetActive(false);
+        }
+        cardid.Clear();
     }
 
 
-    
-    
-    
-    
-    
-    
-    //revisar si funciona precupacion: referencia   
-    // public GameLogic.Card[] ConvertrowstoRow(List<GameObject> UIrowlist)
-    // {
-    //     Row UIrow = UIrowlist.ElementAt(0).GetComponentInParent<Row>();
-    //     GameLogic.Card[] logicrow = null;
-    //     switch (UIrow)
-    //     {
-    //         case Row.attackRow:
-    //             logicrow = GameManager.instance.logicGame.PlayerOnTurn().battleField.contactrow;
-    //         break;
-    //         case Row.distantRow:
-    //             logicrow = GameManager.instance.logicGame.PlayerOnTurn().battleField.distantrow;
-    //         break;
-    //         case Row.siegeRow:
-    //             logicrow = GameManager.instance.logicGame.PlayerOnTurn().battleField.siegerow;
-    //         break;
-    //         case Row.Leader:
-    //            logicrow = GameManager.instance.logicGame.PlayerOnTurn().battleField.leader;
-    //         break;
-    //         case Row.Wheather:
-    //            logicrow = GameManager.instance.logicGame.PlayerOnTurn().battleField.weatherow;
-    //         break;
-    //     }
-    //     return logicrow;
-    // }
+
 }
 

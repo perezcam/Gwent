@@ -44,7 +44,7 @@ public class CardLists
         EM3D.Initialize("Equipamiento de Maniobra Tridimensional", "Carta Incremento: Permite un movimiento y evasión rápidos, esencial para el combate moderno por lo que aumenta la capacidad de ataque de cada carta en su poder.", 2, Row.IsiegeRow, 5,null);
         eren.Initialize("Eren Yeager", "Carta de Héroe: Posee el poder de transformarse y aplastar enemigos con fuerza devastadora.", 11, Row.attackRow, 6,null);
         erwin.Initialize("Erwin Smith", "Carta de Héroe: Su liderazgo aumenta la moral y el poder de todos los aliados en batalla, sacrificara su brazo para eliminar al mas debil del enemigo", 6, Row.attackRow, 7,null);
-        estrategiaLevi.Initialize("Estrategia de Levi", "Carta Unidad: Una maniobra táctica que corta las defensas enemigas con precisión quirúrgica.Eliminara facilmente a la fila enemiga con menos cartas", 7, Row.IattackRow, 8,null);
+        estrategiaLevi.Initialize("Estrategia de Levi", "Carta Unidad: Una maniobra táctica que corta las defensas enemigas con precisión quirúrgica.Eliminara facilmente la fila con menos cartas", 7, Row.IattackRow, 8,null);
         fleger.Initialize("Flegel Reeves", "Carta de Unidad: Inspira el apoyo local, proporcionando refuerzos y esperanza. Tiene la capacidad de lograr un despeje efectivo", 3, Row.siegeRow, 9,null);
         gabi.Initialize("Gabi Braun", "Carta de Unidad: Joven e imprudente, capaz de daños inesperados y dramáticos. Es un buen recurso que aumentara el poder de los que luchan a su lado", 5, Row.distantRow, 10,null);
         hange.Initialize("Hange Zoë", "Carta de Héroe: Utiliza su conocimiento científico para crear ventajas tácticas", 5, Row.Leader, 11,null);
@@ -52,16 +52,16 @@ public class CardLists
         historia.Initialize("Historia Reiss", "Carta de Héroe: Empodera y protege a los aliados cercanos con su presencia real.No tiene habilidad especial definida", 5, Row.siegeRow, 13,null);
         jean.Initialize("Jean Kirstein", "Carta de Unidad: Luchador adaptable, eficaz en múltiples escenarios de combate.", 6, Row.attackRow, 14,null);
         levi.Initialize("Levi Ackerman", "Carta de Héroe: Extremadamente letal en el ataque, puede diezmar líneas enemigas enteras.Y en ocasiones si sus tropas lo traicionan tambien las eliminara", 8, Row.attackRow, 15,null);
-        magaly.Initialize("Magaly", "Carta de Unidad: Guerrera menos conocida, sorprendentemente eficaz en el combate.", 4, Row.distantRow, 16,null);
+        magaly.Initialize("Magaly", "Carta de Unidad: Guerrera menos conocida, sorprendentemente eficaz en el combate Quita incrementos y le da el poder original a las cartas.", 4, Row.distantRow, 16,null);
         maniobradeDistraccion.Initialize("Maniobra de Distracción", "Carta Clima: Desvía la atención del enemigo,sus incrementos se veran perjudicados, bajando su guardia, pero provoca perdidas de puntos tambien a las cartas que permanecen en la fila propia.", 0, Row.W_distant, 17,null);
         mikasa.Initialize("Mikasa Ackerman", "Carta de Héroe: Combatiente altamente capacitada, inflige daños significativos a sus enemigos.Puede utilizar todas las cartaas del campo para aumentar el poder de cada una en su promedio", 8, Row.attackRow, 18,null);
         nanaba.Initialize("Nanaba", "Carta de Unidad: Experta en movilidad y enfrentamiento con el enemigo.", 4, Row.distantRow, 19,null);
         petra.Initialize("Petra Ral", "Carta de Unidad: Apoya a sus aliados con habilidades que mejoran sus capacidades.Te permite obtener mas apoyo al incrementa 1 carta a tu mano", 4, Row.distantRow, 20,null);
         refuerzodeTrost.Initialize("Refuerzos de Trost", "Carta Incremento: Fortalece la línea más débil, proporcionando apoyo crucial, dandole mas poder a las cartas  de su fila para defender la ciudad.", 1, Row.IdistantRow, 21,null);
         sasha.Initialize("Sasha Blouse", "Carta de Unidad: Francotiradora, puede apuntar a unidades clave enemigas desde la distancia.Podra eliminar a el mas poderoso enemigo desde lejos", 6, Row.distantRow, 22,null);
-        takami.Initialize("Takami", "Carta de Unidad: Un personaje menor con un papel en el reconocimiento y la inteligencia.", 3, Row.siegeRow, 23,null);
+        takami.Initialize("Takami", "Carta de Unidad: Un personaje menor con un papel en el reconocimiento y la inteligencia. reduce el poder de las cartas debiles a cero", 3, Row.siegeRow, 23,null);
         ymir.Initialize("Ymir", "Carta de Héroe: Lucha ferozmente por sus amigos, impredecible en la batalla.Es capaz de darlo todo para lograr que la fuerza de sus companeros aumente", 5, Row.attackRow, 24,null);
-        marco.Initialize("Marco Bott", "Carta de Unidad: Valiente y con un gran sentido de la justicia, busca proteger a sus compañeros en todo momento.",4 , Row.siegeRow, 25,null);
+        marco.Initialize("Marco Bott", "Carta de Unidad: Valiente y con un gran sentido de la justicia, busca proteger a sus compañeros en todo momento. Puede sustituir a cualquiera" ,0, Row.Null, 25,null);
 
         HumanityDeck.Add(armin);
         HumanityDeck.Add(ataquenocturno);

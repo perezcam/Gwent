@@ -4,7 +4,7 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace GameLogic
 {
-    // type 0 => carta de unidad, tupe 1=> carta especial type 2 => carta heroe
+    // type 0 => carta de unidad, type 1=> carta especial type 2 => carta heroe, type 4=> decoy card
     // row 1 => contact row 2 => distant  row3=> siege 
     
     public class Card
@@ -19,8 +19,6 @@ namespace GameLogic
            this.type = type;
            cardfunction.function=function;
            initialPowerAttack = powerattack;
-           On_W_ReducePowerOfWeakCards = false;
-           On_W_ResetCardValues = false;
            
         }
         public int type{get;set;}
@@ -31,8 +29,6 @@ namespace GameLogic
         public int row{get;set;}      
         public Functions cardfunction = new Functions();
         public int initialPowerAttack{get;set;} 
-        public bool On_W_ReducePowerOfWeakCards{get;set;}
-        public bool On_W_ResetCardValues{get;set;}
          
          public Card Clone()
         {
@@ -41,8 +37,6 @@ namespace GameLogic
             clone.ID = ID;
             clone.name = name;
             clone.initialPowerAttack = initialPowerAttack;
-            clone.On_W_ReducePowerOfWeakCards = On_W_ReducePowerOfWeakCards;
-            clone.On_W_ResetCardValues = On_W_ResetCardValues;
             clone.type = type;
             return clone;
         }
