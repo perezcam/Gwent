@@ -101,17 +101,17 @@ public class Player:MonoBehaviour
         {
             if(GameManager.instance.playerOnTurn == this)
             {
-                StartCoroutine(RotateCard(card));
+                StartCoroutine(RotateCard(card,true));
                 card.transform.GetChild(1).gameObject.SetActive(true);
             }
             else
             {
-                StartCoroutine(RotateCard(card));
+                StartCoroutine(RotateCard(card,false));
                 card.transform.GetChild(1).gameObject.SetActive(false);
             }
         }
     }
-     private IEnumerator RotateCard(GameObject card)
+     private IEnumerator RotateCard(GameObject card, bool up)
     {
         float halfDuration = 0.25f; 
         float duration = 0.5f; 
@@ -128,8 +128,8 @@ public class Player:MonoBehaviour
             yield return null;
         }
 
-        card.transform.GetChild(0).gameObject.SetActive(true);
-        card.transform.GetChild(0).gameObject.SetActive(true);
+        card.transform.GetChild(0).gameObject.SetActive(!up);
+        card.transform.GetChild(1).gameObject.SetActive(up);
 
         while (elapsed < duration)
         {

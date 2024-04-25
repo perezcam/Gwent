@@ -11,6 +11,7 @@ using TMPro;
 using UnityEngine.UI;
 using UnityEngine.XR;
 using System.Threading.Tasks;
+using UnityEngine.Windows.WebCam;
 public class GameManager: MonoBehaviour
 {
     public GameObject WeatherRow;
@@ -86,7 +87,10 @@ public class GameManager: MonoBehaviour
         player2.TakeCards(); 
         yield return new WaitUntil(() => player2.hand.Count >= 10);
         player2name.text=player2.playername;
-        player2.HideOrShowCards();
+        foreach(GameObject card in player2.hand)
+        {
+            card.transform.GetChild(1).gameObject.SetActive(false);
+        }
         
         player1.enemy = player2;
         player2.enemy = player1;
@@ -116,18 +120,22 @@ public class GameManager: MonoBehaviour
             //Setea el nuevo jugador del turno
             playerOnTurn = (currenTurn%2==0)? player1 : player2;
             playerOnTurn.passed = false;
-            player1.HideOrShowCards();
-            player2.HideOrShowCards();
             //permite que la logica sepa que jugador esta en su turno
             SetLogicTurn();
             
             //Hace el cambio de dos cartas inicial
             if(currentRound==0 && currenTurn==1)
-            {
+            { 
+                foreach(GameObject card in player2.hand)
+                {
+                    card.transform.GetChild(1).gameObject.SetActive(true);
+                }  
                 InitialChange(player2);
                 logicGame.player2.SetLogicDeck(CardDatatoInt(player2.deck));
                 logicGame.player2.SetLogicHand(GameObjecttoInt(player2.hand));
             }
+            player1.HideOrShowCards();
+            player2.HideOrShowCards();
             //Permite que el jugador actual juegue una carta     
             playerOnTurn.board.cardPlayed=false;
             Debug.Log("Turno pasado!");   

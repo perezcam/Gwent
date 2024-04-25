@@ -56,7 +56,7 @@ namespace GameLogic
         public static Card Caminos = new Card("Caminos", 2, 46, null, Functions.IncreasePowerRow, 3, 1);
         public static Card ElDespertar = new Card("El Despertar", 0, 47, null, Functions.W_ResetCardValues, 3, 1);
         public static Card SuerodeTitan = new Card("Suero de Titán", 2, 48, null, Functions.IncreasePowerRow, 2, 1);
-        public static Card FuriaTitan = new Card("Furia de Titán", 3, 49, null, Functions.IncreasePowerRow, 1, 0);
+        public static Card FuriaTitan = new Card("Furia de Titán", 3, 49, null, Functions.IncreasePowerRow, 1, 1);
         public static Card LLuviadeRocas = new Card("Lluvia de Rocas", 0, 50, null, Functions.W_ResetCardValues, 3, 1);
         public static Card SuenodeFundador = new Card("Sueño de Fundador", 0, 51, null, Functions.W_ReducePowerOfWeakCards, 2, 1);
         public static Card RugidodelTitanBestia = new Card("Rugido del Titán Bestia", 2, 52, null, Functions.RemoveWeatherCard, 2, 0);
