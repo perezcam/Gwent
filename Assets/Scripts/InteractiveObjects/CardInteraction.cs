@@ -7,11 +7,13 @@ public class CardInteraction : MonoBehaviour, IPointerEnterHandler, IPointerExit
     private Vector3 originalScale;
     public bool isSelected = false;
     private static int selectedCount = 0;
-     public static List<CardInteraction> selectedCards = new List<CardInteraction>();
+    public static List<CardInteraction> selectedCards = new List<CardInteraction>();
+    private int originalLayer;
     void Awake()
     {
         originalScale = transform.localScale; 
         selectedCount = 0;
+        originalLayer = gameObject.layer;
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -19,6 +21,7 @@ public class CardInteraction : MonoBehaviour, IPointerEnterHandler, IPointerExit
         if (!isSelected) 
         {
             transform.localScale = originalScale * 1.5f; 
+            transform.gameObject.layer = 20;
         }
     }
 
@@ -27,6 +30,7 @@ public class CardInteraction : MonoBehaviour, IPointerEnterHandler, IPointerExit
         if (!isSelected) 
         {
             transform.localScale = originalScale;
+            transform.gameObject.layer = originalLayer;
         }
     }
     public void OnPointerClick(PointerEventData eventData)
@@ -35,13 +39,15 @@ public class CardInteraction : MonoBehaviour, IPointerEnterHandler, IPointerExit
         {
             isSelected = false;
             selectedCount--; 
-            transform.localScale = originalScale;    
+            transform.localScale = originalScale;
+            selectedCards.Remove(this); 
         }
         else if (selectedCount < 2) 
         {
             isSelected = true;
             selectedCount++; 
-            selectedCards.Add(this);
+            selectedCards.Add(this); 
         }
     }
+
 }

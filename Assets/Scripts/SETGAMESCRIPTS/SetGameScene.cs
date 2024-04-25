@@ -2,9 +2,10 @@ using System.Runtime.ExceptionServices;
 using UnityEngine;
 using TMPro;
 using UnityEditor;
-using UnityEditor.SearchService;
 using JetBrains.Annotations;
 using UnityEngine.UIElements;
+using UnityEditor.iOS;
+using UnityEditor.SearchService;
 
 
 public class SetGameScene : MonoBehaviour
@@ -12,12 +13,12 @@ public class SetGameScene : MonoBehaviour
     public GameObject player1;
     public GameObject player2;
     public GameObject continueButton;
-    public SceneAsset nextScene;
     public GameObject currentScene;
     public static SetGameScene instance;
     public DataBase gameData;
     private bool player1seted;
     private bool player2seted;
+    public SceneManagement changescene;
     void Awake() 
     {
         player2.GetComponent<SetPlayer>().titanfaction.GetComponent<FactionSelection>().enabled = false;
@@ -90,6 +91,6 @@ public class SetGameScene : MonoBehaviour
         gameData.GetComponent<DataBase>().faction1 = player1.GetComponent<SetPlayer>().faction;
         gameData.GetComponent<DataBase>().name2 = player2.GetComponent<SetPlayer>().label;
         gameData.GetComponent<DataBase>().faction2 = player2.GetComponent<SetPlayer>().faction;
-        SceneManagement.ChangeScene(nextScene.name);   
+        changescene.ChangeScene();   
     }
 }

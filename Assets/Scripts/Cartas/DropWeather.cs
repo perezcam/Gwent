@@ -10,15 +10,27 @@ public class DropWeather : MonoBehaviour, IDropHandler
 {
      public Row row;
      private Vector2 cardScale = new Vector2(0.0244f,0.0255f);
-     public List<GameObject> itemsDropped = new List<GameObject>();
+     public List<GameObject> itemsDropped;
+     public bool ispossible;
     public void OnDrop(PointerEventData eventData)
     {
         GameObject droppedCard = eventData.pointerDrag; 
         DragHandler dragHandler = droppedCard.GetComponent<DragHandler>();
         Row cardrow = droppedCard.GetComponent<CardDisplay>().row;
         Player cardOwner = droppedCard.GetComponent<CardDisplay>().owner;
+        
+        if(cardrow == Row.W_attack && !GameManager.instance.weatherows[0])
+            ispossible = true;
+        else if(cardrow == Row.W_distant && !GameManager.instance.weatherows[1])
+        {
+             Debug.Log(GameManager.instance.weatherows[1]);
+             ispossible = true;
+        }
+        if(cardrow == Row.W_siege && !GameManager.instance.weatherows[2])
+            ispossible = true;
     
-        if(itemsDropped.Count >= 1 || cardrow != row) 
+        Debug.Log(ispossible);
+        if(!ispossible || cardrow != row) 
         {
             droppedCard.transform.position = dragHandler.startPosition;
             droppedCard.transform.SetParent(dragHandler.startParent, false);
@@ -37,14 +49,17 @@ public class DropWeather : MonoBehaviour, IDropHandler
                     case Row.W_attack:
                         GameManager.instance.logicGame.PlayerOnTurn().AddtoBattleField(droppedid,1);
                         cardOwner.AddCardTo(cardOwner.board.attackRow,droppedCard);
+                        GameManager.instance.weatherows[0] = true;
                         break;
                     case Row.W_distant:
                         GameManager.instance.logicGame.PlayerOnTurn().AddtoBattleField(droppedid,2);
                         cardOwner.AddCardTo(cardOwner.board.distantRow,droppedCard);
+                        GameManager.instance.weatherows[1] = true;
                         break;
                     case Row.W_siege:
                         GameManager.instance.logicGame.PlayerOnTurn().AddtoBattleField(droppedid,3);
                         cardOwner.AddCardTo(cardOwner.board.siegeRow,droppedCard);
+                        GameManager.instance.weatherows[2] = true;
                         break;     
                 }
                 // Configura el objeto como hijo del contenedor y ajusta su posición
@@ -58,6 +73,7 @@ public class DropWeather : MonoBehaviour, IDropHandler
                 }
                 itemsDropped.Add(droppedCard);
                 GameManager.instance.WeatherRow.SetActive(false);
+                ispossible = false;
                 
             }
         }

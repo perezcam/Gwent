@@ -4,7 +4,7 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace GameLogic
 {
-    // type 0 => carta de unidad, type 1=> carta especial type 2 => carta heroe, type 4=> decoy card
+    // type 0 => carta de unidad, type 1=> carta especial type 2 => carta heroe,type 3 => carta lider ,type 4=> decoy card
     // row 1 => contact row 2 => distant  row3=> siege 
     
     public class Card

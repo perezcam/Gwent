@@ -13,7 +13,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Collections;
 using UnityEngine.UI;
-using UnityEditor.Build;
 using GameLogic;
 
 
@@ -96,6 +95,7 @@ public class DeckManager: MonoBehaviour
             }
         }
     }
+    
     public void SetDictionary(Player player)
     {
         foreach (GameObject card in player.CardInstances)
@@ -111,14 +111,15 @@ public class DeckManager: MonoBehaviour
         playerOnTurn = player;
         this.blurPanel = blurPanel;
         blurPanel.FadeToOpaque();
-        ClonedHand = Instantiate(player.board.handcontainer, new Vector3(-11,70,0), Quaternion.identity);
+        ClonedHand = Instantiate(player.board.handcontainer, new Vector3(-11,30,0), Quaternion.identity);
+        ClonedHand.GetComponent<GridLayoutGroup>().spacing = new Vector2(4f,0f);
         ClonedHand.transform.SetParent(blurPanel.transform.parent,false);
         ClonedHand.transform.localScale = new Vector3(2.2f,2.2f,2.2f);
         
         foreach (Transform card in ClonedHand.transform)
         {
             if(card==ClonedHand.transform.GetChild(0))
-                Destroy(card.gameObject); 
+            Destroy(card.gameObject); 
             card.gameObject.AddComponent<CardInteraction>(); 
             DragHandler dragHandler = card.gameObject.GetComponent<DragHandler>();
             CardHoverDisplay cardVisor = card.gameObject.GetComponent<CardHoverDisplay>(); 
@@ -130,7 +131,18 @@ public class DeckManager: MonoBehaviour
    
         }
     }
+   
 } 
+
+
+
+
+
+
+
+
+
+
 
 
 

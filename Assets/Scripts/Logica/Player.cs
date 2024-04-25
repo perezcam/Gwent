@@ -97,20 +97,21 @@ namespace GameLogic
                 throw;
             }
             //Pone cada carta nueva bajo los efectos de las activas con efectos permanentes
+            //la comprobacion type != 2 es para asegurar que la carta no es carta heroe
             foreach (Card Card in cardsrow)
             {
-                if(Card.cardfunction.function == Functions.IncreasePowerRow && card.ID!=Card.ID)
+                if(Card.cardfunction.function == Functions.IncreasePowerRow && card.ID!=Card.ID && card.type!=2)
                 {
                     card.powerattack += Card.powerattack;
                     totalforce += Card.powerattack;
                 }
             }  
-            if(card.owner.battleField.GetWeather(cardsrow)==1 && card.powerattack<=4)
+            if(card.owner.battleField.GetWeather(cardsrow)==1 && card.powerattack<=4 && card.type!=2)
             {
                 totalforce -= card.powerattack;
                 card.powerattack = 0;
             } 
-            else if(card.owner.battleField.GetWeather(cardsrow)==2 && card.cardfunction.function == Functions.IncreasePowerRow) 
+            else if(card.owner.battleField.GetWeather(cardsrow)==2 && card.cardfunction.function == Functions.IncreasePowerRow && card.type!=2) 
             {   // Elimina el efecto provocado por la carta y luego la elimina por ser tipo Increase
                 foreach (Card Card in cardsrow)
                 {

@@ -4,14 +4,15 @@ using UnityEngine;
 
 public class CardMover: MonoBehaviour
 {
-    public Transform handContainer; // Contenedor de la mano
-    public GameObject cardBack; // El dorso de la carta
-    public GameObject cardFront; // El frente de la carta
+    public Transform finalObject; 
+    public GameObject cardBack; 
+    public GameObject cardFront;
     DragHandler dragHandler;
     private Vector2 cardScale = new Vector2(0.0244f,0.0255f);
 
-    public void MoveCardToHand(GameObject card)
+    public void MoveCard(GameObject card, Transform finalObject)
     {
+        this.finalObject = finalObject;
         dragHandler = card.GetComponent<DragHandler>();
         dragHandler.enabled = false;
        
@@ -19,13 +20,14 @@ public class CardMover: MonoBehaviour
         cardFront = card.transform.Find("CardFront").gameObject;
         cardFront.SetActive(false); 
 
-        StartCoroutine(MoveAndRotateCard(card, handContainer.position));
+        StartCoroutine(MoveAndRotateCard(card, finalObject.position));
         
     }
     private IEnumerator MoveAndRotateCard(GameObject card, Vector3 targetPosition)
     {
-        float halfDuration = 0.5f; // Mitad de la duración de la animación
-        float duration = 1f; // Duración total de la rotación y el movimiento
+        // Mitad de la duración de la animación
+        float halfDuration = 0.25f; 
+        float duration = 0.5f; // Duración total de la rotación y el movimiento
         float elapsed = 0; // Tiempo transcurrido
         card.transform.localScale = cardScale;
        
@@ -59,7 +61,7 @@ public class CardMover: MonoBehaviour
         card.transform.rotation = endRotation; // Asegura que la carta esté correctamente orientada
      
         dragHandler.enabled = true;  
-        card.transform.SetParent(handContainer); // Configura el padre al contenedor de la mano
+        card.transform.SetParent(finalObject);
         card.transform.localScale = cardScale;
     }
 }

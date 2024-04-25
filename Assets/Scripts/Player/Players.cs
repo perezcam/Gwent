@@ -8,6 +8,7 @@ using TMPro;
 using GameLogic;
 using System;
 using UnityEngine.Animations;
+using UnityEngine.UI;
 
 public class Player:MonoBehaviour
 {
@@ -15,19 +16,22 @@ public class Player:MonoBehaviour
     public List<CardData> deck;
     public List<GameObject> CardInstances;
     public List<GameObject> hand;
-    public CardData leader; 
-    public TextMeshProUGUI points; 
+    public GameObject RoundPoint;
+    public Text points; 
     public string faction;
     public Board board;
+    public GameObject leader;
     public CardMover cardMover2D;
+    public CardMover deleteMover;
     public Dictionary<int, GameObject> CardDictionary;
     public bool passed;
     public int rwin;
     public Player enemy;
     private Vector2 cardScale = new Vector2(0.01303835f,0.01362615f);
-    private List<GameObject> cardClones = new List<GameObject>();
+    public List<GameObject> cardClones = new List<GameObject>();
 
     // Método para inicializar el jugador.
+    
     public void Awake()
     {
         points.text= "0";
@@ -36,12 +40,41 @@ public class Player:MonoBehaviour
         CardInstances= new List<GameObject>();
         CardDictionary = new Dictionary<int, GameObject>();
         passed=false;
+        RoundPoint.transform.GetChild(0).gameObject.SetActive(false);
+        RoundPoint.transform.GetChild(1).gameObject.SetActive(false);
+        RoundPoint.transform.GetChild(2).gameObject.SetActive(false);
     }
     public void Initialize(string playername, string faction)
     {
         this.playername = playername;
         this.faction = faction;
         
+    }
+    public void TakeCards()
+    {
+        foreach (GameObject card in CardInstances)
+        {
+            if(card.GetComponent<CardDisplay>().row == Row.Leader)
+            {
+                leader = card;
+                Debug.Log(card.GetComponent<CardDisplay>().cardname.text);
+                break;
+            }
+        }
+        CardInstances.Remove(leader);
+        CardDictionary.Remove(leader.GetComponent<CardDisplay>().ID);
+        StartCoroutine(SetLeaderAnimation(leader));
+        leader.GetComponent<DragHandler>().enabled = false;
+    }
+    private IEnumerator SetLeaderAnimation(GameObject leader)
+    {
+        cardMover2D.MoveCard(leader,board.leaderSlot.transform);
+        while (Vector3.Distance(leader.transform.position, board.leaderSlot.transform.position) > 0.01f)
+        {
+            // Espera a que la carta lider llegue a su destino antes de seguir
+            yield return null; 
+        }
+        Completehand(10);
     }
 
     public void Completehand(int numberofcards)
@@ -52,7 +85,7 @@ public class Player:MonoBehaviour
     {
         while(hand.Count()<value && hand.Count()<10)
         {
-            cardMover2D.MoveCardToHand(cards[0]);
+            cardMover2D.MoveCard(cards[0],board.handcontainer.transform);
             while (Vector3.Distance(cards[0].transform.position, board.handcontainer.transform.position) > 0.01f)
             {
                 // Espera a que la carta actual llegue a su destino antes de comenzar con la siguiente
@@ -61,6 +94,50 @@ public class Player:MonoBehaviour
             hand.Add(cards[0]);
             cards.RemoveAt(0);
         }  
+    }
+    public void HideOrShowCards()
+    {
+        foreach (GameObject card in hand)
+        {
+            if(GameManager.instance.playerOnTurn == this)
+            {
+                StartCoroutine(RotateCard(card));
+                card.transform.GetChild(1).gameObject.SetActive(true);
+            }
+            else
+            {
+                StartCoroutine(RotateCard(card));
+                card.transform.GetChild(1).gameObject.SetActive(false);
+            }
+        }
+    }
+     private IEnumerator RotateCard(GameObject card)
+    {
+        float halfDuration = 0.25f; 
+        float duration = 0.5f; 
+        float elapsed = 0; 
+    
+        Quaternion startRotation = Quaternion.Euler(0, 180,0); 
+        Quaternion midRotation = Quaternion.Euler(0, 270, 0); 
+        Quaternion endRotation = Quaternion.Euler(0,360, 0);
+
+        while (elapsed < halfDuration)
+        {
+            card.transform.rotation = Quaternion.Lerp(startRotation, midRotation, elapsed / halfDuration);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        card.transform.GetChild(0).gameObject.SetActive(true);
+        card.transform.GetChild(0).gameObject.SetActive(true);
+
+        while (elapsed < duration)
+        {
+            card.transform.rotation = Quaternion.Lerp(midRotation, endRotation, (elapsed - halfDuration) / halfDuration);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        card.transform.rotation = endRotation; 
     }
     public void AddCardTo(List<GameObject> row,GameObject card)
     {   
@@ -74,11 +151,7 @@ public class Player:MonoBehaviour
         
         points.text = GameManager.instance.logicGame.PlayerOnTurn().totalforce.ToString();
         enemy.points.text = GameManager.instance.logicGame.PlayerOnTurn().GetEnemy().totalforce.ToString();
-        
-        
-
     }
-
     //Actualiza el card.attackvalue de cada carta en caso de que haya sido afectado por un efecto
     public void UpdateCardsPower()
     {
@@ -121,8 +194,7 @@ public class Player:MonoBehaviour
     }
     //Actualiza las cartas en la interfaz del juego a partir de los cambios que ocurran en la logica
     public void UpdateCardsinGame()
-    { 
-       
+    {
         if ( GameManager.instance.logicGame.PlayerOnTurn().cardstodelinUI.Contains(2024))
         {
             Completehand(hand.Count+1);
@@ -131,8 +203,8 @@ public class Player:MonoBehaviour
                           
         DeleteCards(GameManager.instance.logicGame.PlayerOnTurn().cardstodelinUI,this);
         DeleteCards(GameManager.instance.logicGame.PlayerOnTurn().GetEnemy().cardstodelinUI,enemy);  
-        GameManager.instance.logicGame.player1.cardstodelinUI = new List<int>();
-        GameManager.instance.logicGame.player2.cardstodelinUI = new List<int>();
+        GameManager.instance.logicGame.player1.cardstodelinUI.Clear();
+        GameManager.instance.logicGame.player2.cardstodelinUI.Clear();
     }
     
     
@@ -151,6 +223,7 @@ public class Player:MonoBehaviour
                 throw;
             }
         }
+        Debug.Log("afuera " + cardClones.Count());
         GameManager.instance.logicGame.player1.W_cardstoshowinUI = new List<int>();
         GameManager.instance.logicGame.player2.W_cardstoshowinUI = new List<int>();
     }
@@ -172,30 +245,32 @@ public class Player:MonoBehaviour
                 break;
         }
         GameObject cardclone = Instantiate(card, parent);
+        cardClones.Add(cardclone);
+        Debug.Log(cardClones.Count()+ " Instanciando");
         cardclone.transform.SetParent(parent);
         cardclone.transform.localScale = cardScale;
         cardclone.transform.position = parent.position;
-        parent.gameObject.GetComponent<DropWeather>().itemsDropped.Add(cardclone);
-        cardClones.Add(cardclone);
+        cardclone.GetComponent<DragHandler>().enabled = false;
     }
     public void DeleteCards(List <int> cardid,Player player)
     {  
         List<GameObject> cardstodestroy = new List<GameObject>();
-        List<GameObject> cardsclonesdestroy = new List<GameObject>();
         
         foreach (int ID in cardid)
         {
            cardstodestroy.Add(player.CardDictionary[ID]);
-           foreach(GameObject cardclone in cardClones)
+           Debug.Log("en el delete" + player.cardClones.Count());
+           foreach(GameObject cardclone in player.cardClones)
            {
+                Debug.Log("clon " + cardclone.GetComponent<CardDisplay>().cardname);
                 if(ID == cardclone.GetComponent<CardDisplay>().ID)
                 {
-                    cardsclonesdestroy.Add(cardclone);
+                    cardstodestroy.Add(cardclone);
                 }
            }
         }
         foreach (GameObject card in cardstodestroy)
-        {
+        {            
             if (player.board.attackRow.Contains(card))
                 player.board.attackRow.Remove(card);
             else if (player.board.distantRow.Contains(card))
@@ -206,17 +281,23 @@ public class Player:MonoBehaviour
             card.transform.SetParent(player.board.graveYard.transform);
             card.transform.position = player.board.graveYard.transform.position;
             card.transform.localScale = cardScale;
-            
-            card.SetActive(false);
         }
-        foreach (GameObject cardclone in cardsclonesdestroy)
-        {
-            cardclone.SetActive(false);
-        }
+        
+        StartCoroutine(DeleteCardAnimation(cardstodestroy));        
+     //   StartCoroutine(DeleteCardAnimation(cardsclonesdestroy));
         cardid.Clear();
     }
-
-
-
+    private IEnumerator DeleteCardAnimation(List<GameObject> cardstodelete)
+    {
+        foreach (GameObject card in cardstodelete)
+        {
+            deleteMover.MoveCard(card,card.GetComponent<CardDisplay>().owner.board.graveYard.transform);
+            while (Vector3.Distance(card.transform.position, card.GetComponent<CardDisplay>().owner.board.graveYard.transform.position) > 0.01f)
+            {
+                // Espera a que la carta llegue al graveyard antes de seguir
+                yield return null; 
+            }  
+        }
+    }
 }
 

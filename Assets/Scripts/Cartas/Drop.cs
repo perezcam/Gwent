@@ -14,7 +14,7 @@ public class Drop : MonoBehaviour, IDropHandler
 {
     public Row row;
     public Player player;
-    public List<GameObject> itemsDropped = new List<GameObject>();
+    public List<GameObject> itemsDropped;
     private Vector2 cardScale = new Vector2(0.0244f,0.0255f);
 
     public void OnDrop(PointerEventData eventData)
@@ -23,6 +23,29 @@ public class Drop : MonoBehaviour, IDropHandler
         DragHandler dragHandler = droppedCard.GetComponent<DragHandler>();
         Row cardrow = droppedCard.GetComponent<CardDisplay>().row;
         Player cardOwner = droppedCard.GetComponent<CardDisplay>().owner;
+
+        switch (row)
+        {
+            case Row.attackRow:
+                itemsDropped = player.board.attackRow;
+                break;
+            case Row.distantRow:
+                itemsDropped = player.board.distantRow;
+                break;
+            case Row.siegeRow:
+                itemsDropped = player.board.siegeRow; 
+                break;
+            case Row.IattackRow:
+                itemsDropped = player.board.IattackRow;
+                break;
+            case Row.IdistantRow:
+                itemsDropped = player.board.IdistantRow;
+                break;
+            case Row.IsiegeRow:
+                itemsDropped = player.board.IsiegeRow;
+                break;
+        }
+        
       
         if(cardOwner!= player ||cardrow!=row||((cardrow==Row.IattackRow||cardrow==Row.IdistantRow||cardrow==Row.IsiegeRow) && itemsDropped.Count==1)||itemsDropped.Count >= 7) 
         {

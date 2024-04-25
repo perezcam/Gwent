@@ -6,9 +6,11 @@ using UnityEngine;
 public class Board : MonoBehaviour
 {
     public List<GameObject> attackRow = new List<GameObject>();
+    public List<GameObject> IattackRow = new List<GameObject>();
     public List<GameObject> distantRow = new List<GameObject>();
+    public List<GameObject> IdistantRow = new List<GameObject>();
     public List<GameObject> siegeRow = new List<GameObject>();
-    public List<GameObject> weatherRow = new List<GameObject>();
+    public List<GameObject> IsiegeRow = new List<GameObject>();
     public List<CardData> handlist = new List<CardData>();
     public GameObject handcontainer;
     public GameObject leaderSlot;
@@ -17,6 +19,18 @@ public class Board : MonoBehaviour
     public GameObject graveYard;
     public bool cardPlayed = true;
     
+    public void ClearUIRows()
+    {
+        attackRow.Clear();
+        distantRow.Clear();
+        siegeRow.Clear();
+        IsiegeRow.Clear();
+        IdistantRow.Clear();
+        IattackRow.Clear();
+        GameManager.instance.weatherows[0] = false;
+        GameManager.instance.weatherows[1] = false;
+        GameManager.instance.weatherows[2] = false;
+    }
 
     public void Update()
     { 

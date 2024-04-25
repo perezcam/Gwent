@@ -5,7 +5,8 @@ using System;
 
 public class CardDisplay : MonoBehaviour
 {
-    public CardData cardData; // Scriptable Object de esta carta
+ // Scriptable Object de esta carta
+    public CardData cardData;
     public TextMeshProUGUI cardname;
     public Image cardBody;
      public TextMeshProUGUI description;
