@@ -95,6 +95,17 @@ public class Player:MonoBehaviour
             cards.RemoveAt(0);
         }  
     }
+    public void ShowAllCard()
+    {
+         foreach (GameObject card in hand)
+        {
+            if(GameManager.instance.playerOnTurn == this)
+            {
+                // StartCoroutine(RotateCard(card,true));
+                card.transform.GetChild(1).gameObject.SetActive(true);
+            }
+        }
+    }
     public void HideOrShowCards()
     {
         foreach (GameObject card in hand)

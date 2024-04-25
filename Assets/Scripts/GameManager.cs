@@ -195,6 +195,8 @@ public class GameManager: MonoBehaviour
                 player2.DeleteCards(logicGame.player2.cardstodelinUI,player2);
                 player2.board.ClearUIRows();
                 currentRound ++;
+                player1.ShowAllCard();
+                player2.ShowAllCard();
                 player1.Completehand(player1.leader.GetComponent<CardDisplay>().cardname.text == "T.Bestia" ? player1.hand.Count()+3 : player1.hand.Count()+2);
                 logicGame.player1.hand = new List<Card>();
                 logicGame.player1.SetLogicHand(GameObjecttoInt(player1.hand));
@@ -204,6 +206,8 @@ public class GameManager: MonoBehaviour
                 player1.passed = false;
                 player2.passed = false;
                 playerOnTurn.board.cardPlayed = false;
+                player1.HideOrShowCards();
+                player2.HideOrShowCards();
         }
     }
     public  void SetRoundWinner()
