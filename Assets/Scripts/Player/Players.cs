@@ -79,7 +79,7 @@ public class Player:MonoBehaviour
 
     public void Completehand(int numberofcards)
     {
-        StartCoroutine(MoveCardsSequentially(CardInstances,numberofcards));
+        StartCoroutine(MoveCardsSequentially(CardInstances,numberofcards));   
     }
     private IEnumerator MoveCardsSequentially(List<GameObject> cards,int value)
     {
@@ -93,18 +93,7 @@ public class Player:MonoBehaviour
             }
             hand.Add(cards[0]);
             cards.RemoveAt(0);
-        }  
-    }
-    public void ShowAllCard()
-    {
-         foreach (GameObject card in hand)
-        {
-            if(GameManager.instance.playerOnTurn == this)
-            {
-                // StartCoroutine(RotateCard(card,true));
-                card.transform.GetChild(1).gameObject.SetActive(true);
-            }
-        }
+        } 
     }
     public void HideOrShowCards()
     {
@@ -309,6 +298,19 @@ public class Player:MonoBehaviour
                 yield return null; 
             }  
         }
+    }
+    public void CompleteandRotateHand(int numberofcards)
+    {
+        StartCoroutine(CompleteandRotate(numberofcards));
+    }
+     private IEnumerator CompleteandRotate(int numberofcards)
+    {
+        Completehand(numberofcards);
+        while(hand.Count()<numberofcards)
+        {
+            yield return null;
+        }
+        HideOrShowCards();
     }
 }
 

@@ -4,8 +4,7 @@ using TMPro;
 using UnityEditor;
 using JetBrains.Annotations;
 using UnityEngine.UIElements;
-using UnityEditor.iOS;
-using UnityEditor.SearchService;
+
 
 
 public class SetGameScene : MonoBehaviour

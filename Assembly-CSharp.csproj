@@ -89,7 +89,6 @@
     <Compile Include="Assets/Scripts/SkipIntro.cs" />
     <Compile Include="Assets/TextMesh Pro/Examples &amp; Extras/Scripts/TMP_PhoneNumberValidator.cs" />
     <Compile Include="Assets/Scripts/gameDataBase.cs" />
-    <Compile Include="Assets/Unity.VisualScripting.Generated/VisualScripting.Core/AotStubs.cs" />
     <Compile Include="Assets/Scripts/Cartas/Drop.cs" />
     <Compile Include="Assets/Scripts/Logica/BattleField.cs" />
     <Compile Include="Assets/TextMesh Pro/Examples &amp; Extras/Scripts/VertexJitter.cs" />

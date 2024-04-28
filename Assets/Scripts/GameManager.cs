@@ -65,7 +65,7 @@ public class GameManager: MonoBehaviour
         if(Input.GetKeyUp(KeyCode.LeftControl))
         {
             WeatherRow.SetActive(false);
-        }
+        } 
     }
     private void InitializeGame()
     {
@@ -181,33 +181,30 @@ public class GameManager: MonoBehaviour
             return;
         }  
         else
-        {       //Jugar otra ronda
-                player1.board.cardPlayed = true;
-                player2.board.cardPlayed = true;
-                logicGame.player1.totalforce = 0;
-                logicGame.player2.totalforce = 0;
-                player1.points.text = "0";
-                player2.points.text = "0";
-                logicGame.player1.SendCardstoGraveyard();
-                player1.DeleteCards(logicGame.player1.cardstodelinUI,player1);
-                player1.board.ClearUIRows();
-                logicGame.player2.SendCardstoGraveyard();
-                player2.DeleteCards(logicGame.player2.cardstodelinUI,player2);
-                player2.board.ClearUIRows();
-                currentRound ++;
-                player1.ShowAllCard();
-                player2.ShowAllCard();
-                player1.Completehand(player1.leader.GetComponent<CardDisplay>().cardname.text == "T.Bestia" ? player1.hand.Count()+3 : player1.hand.Count()+2);
-                logicGame.player1.hand = new List<Card>();
-                logicGame.player1.SetLogicHand(GameObjecttoInt(player1.hand));
-                player2.Completehand(player2.leader.GetComponent<CardDisplay>().cardname.text == "T.Bestia" ? player2.hand.Count()+3 : player2.hand.Count()+2);
-                logicGame.player2.hand = new List<Card>();
-                logicGame.player2.SetLogicHand(GameObjecttoInt(player2.hand));
-                player1.passed = false;
-                player2.passed = false;
-                playerOnTurn.board.cardPlayed = false;
-                player1.HideOrShowCards();
-                player2.HideOrShowCards();
+        {       
+            //Jugar otra ronda
+            player1.board.cardPlayed = true;
+            player2.board.cardPlayed = true;
+            logicGame.player1.totalforce = 0;
+            logicGame.player2.totalforce = 0;
+            player1.points.text = "0";
+            player2.points.text = "0";
+            logicGame.player1.SendCardstoGraveyard();
+            player1.DeleteCards(logicGame.player1.cardstodelinUI,player1);
+            player1.board.ClearUIRows();
+            logicGame.player2.SendCardstoGraveyard();
+            player2.DeleteCards(logicGame.player2.cardstodelinUI,player2);
+            player2.board.ClearUIRows();
+            currentRound ++;
+            player1.CompleteandRotateHand(player1.leader.GetComponent<CardDisplay>().cardname.text == "T.Bestia" ? player1.hand.Count()+3 : player1.hand.Count()+2);
+            logicGame.player1.hand = new List<Card>();
+            logicGame.player1.SetLogicHand(GameObjecttoInt(player1.hand));
+            player2.CompleteandRotateHand(player2.leader.GetComponent<CardDisplay>().cardname.text == "T.Bestia" ? player2.hand.Count()+3 : player2.hand.Count()+2);
+            logicGame.player2.hand = new List<Card>();
+            logicGame.player2.SetLogicHand(GameObjecttoInt(player2.hand));
+            player1.passed = false;
+            player2.passed = false;
+            playerOnTurn.board.cardPlayed = false;
         }
     }
     public  void SetRoundWinner()
@@ -244,7 +241,6 @@ public class GameManager: MonoBehaviour
         }
     }
    
- 
     public static List<int> CardDatatoInt (List<CardData> list)
     {
         List<int> CardsID = new List<int>(); 

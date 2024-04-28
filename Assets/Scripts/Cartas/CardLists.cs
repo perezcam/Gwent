@@ -55,7 +55,7 @@ public class CardLists
         magaly.Initialize("Magaly", "Carta de Unidad: Guerrera menos conocida, sorprendentemente eficaz en el combate Quita incrementos y le da el poder original a las cartas.", 4, Row.distantRow, 16,null);
         maniobradeDistraccion.Initialize("Maniobra de Distracción", "Carta Clima: Desvía la atención del enemigo,sus incrementos se veran perjudicados, bajando su guardia, pero provoca perdidas de puntos tambien a las cartas que permanecen en la fila propia.", 0, Row.W_distant, 17,null);
         mikasa.Initialize("Mikasa Ackerman", "Carta de Héroe: Combatiente altamente capacitada, inflige daños significativos a sus enemigos.Puede utilizar todas las cartaas del campo para aumentar el poder de cada una en su promedio", 8, Row.attackRow, 18,null);
-        nanaba.Initialize("Nanaba", "Carta de Unidad: Experta en movilidad y enfrentamiento con el enemigo.", 4, Row.distantRow, 19,null);
+        nanaba.Initialize("Nanaba", "Carta de Unidad: Experta en movilidad y enfrentamiento con el enemigo.Puede eliminar al mas debil enemiogo", 4, Row.distantRow, 19,null);
         petra.Initialize("Petra Ral", "Carta de Unidad: Apoya a sus aliados con habilidades que mejoran sus capacidades.Te permite obtener mas apoyo al incrementa 1 carta a tu mano", 4, Row.distantRow, 20,null);
         refuerzodeTrost.Initialize("Refuerzos de Trost", "Carta Incremento: Fortalece la línea más débil, proporcionando apoyo crucial, dandole mas poder a las cartas  de su fila para defender la ciudad.", 1, Row.IdistantRow, 21,null);
         sasha.Initialize("Sasha Blouse", "Carta de Unidad: Francotiradora, puede apuntar a unidades clave enemigas desde la distancia.Podra eliminar a el mas poderoso enemigo desde lejos", 6, Row.distantRow, 22,null);
