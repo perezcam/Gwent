@@ -9,6 +9,7 @@ public class TextAnimator : MonoBehaviour
     public Text winnerDisplay;
     public float typingSpeed = 0.05f;
     public string[] winners;
+    public AudioSource keyboardAudio;
     private string[] sentences = 
     {
         "//inicializando sistema de detección de ganador...",
@@ -24,13 +25,14 @@ public class TextAnimator : MonoBehaviour
         "//preparando para revelar el ganador..."
     };
 
-    public void Start()
+    public void Awake()
     {
         winners = new string[2];
     }
     public void StartTextAnimation()
     {
         StartCoroutine(TypeAllSentences());
+        keyboardAudio.Play();
     }
 
    IEnumerator TypeAllSentences()
@@ -45,7 +47,9 @@ public class TextAnimator : MonoBehaviour
     if (winners[1] is null)
     {
         yield return StartCoroutine(TypeSentence(winners[0], Color.red, 48, winnerDisplay)); 
+        keyboardAudio.Stop();
         gameObject.GetComponent<PlayAgainSystem>().ActivatePlayAgain();
+        
     }
     else 
     {

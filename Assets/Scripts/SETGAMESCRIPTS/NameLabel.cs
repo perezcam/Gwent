@@ -11,12 +11,15 @@ public class NameLabel : MonoBehaviour
     public TMP_InputField inputField; 
     public TextMeshProUGUI displayNameText; 
     private bool isWriting = false; 
+    public AudioSource keyboardSound;
 
 
     void Update()
     {
         if (isWriting)
         {
+            if(Input.anyKeyDown && !Input.GetKeyDown(KeyCode.LeftShift))
+                keyboardSound.Play();
             if(Input.GetKeyDown(KeyCode.KeypadEnter))
             {
                 deselectInput();

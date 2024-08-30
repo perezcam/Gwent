@@ -12,6 +12,7 @@ using UnityEngine.UI;
 using UnityEngine.XR;
 using System.Threading.Tasks;
 using UnityEngine.Windows.WebCam;
+using Interpeter;
 public class GameManager: MonoBehaviour
 {
     public GameObject WeatherRow;
@@ -28,8 +29,12 @@ public class GameManager: MonoBehaviour
     public int currentRound;
     public Player playerOnTurn;
     public LogicGameManager logicGame;
+    public ErrorDisplay errorReporter;
     public static GameManager instance;
     public Button turnbutton;
+    public AudioSource clickSound;
+    public AudioSource cardSelect;
+    public AudioSource movecardAudio;
     public void Awake()
     {
         WeatherRow.SetActive(false);
@@ -47,13 +52,14 @@ public class GameManager: MonoBehaviour
     {
         turnbutton.gameObject.SetActive(false);
         GameOver.SetActive(false);
+        InsertCreatedByUserCards();
+        logicGame = new LogicGameManager(SetGameScene.instance.gameData.name1, SetGameScene.instance.gameData.faction1,SetGameScene.instance.gameData.name2, SetGameScene.instance.gameData.faction1);
+        logicGame.currenTurn=0;
         currenTurn = 0;
         currentRound = 0;
         blurPanel.gameObject.SetActive(false);
-        CardLists cardLists = new CardLists();
+        CardLists cardLists = new CardLists(LogicGameManager.CardDictionary);
         deckManager = new DeckManager(cardLists);
-        logicGame = new LogicGameManager(SetGameScene.instance.gameData.name1, SetGameScene.instance.gameData.faction1,SetGameScene.instance.gameData.name2, SetGameScene.instance.gameData.faction1);
-        logicGame.currenTurn=0;
         InitializeGame();
     }
     public void Update()
@@ -74,7 +80,6 @@ public class GameManager: MonoBehaviour
 
     private IEnumerator InitializePlayers()
     {
-
         player1.Initialize(SetGameScene.instance.gameData.name1, SetGameScene.instance.gameData.faction1);
         deckManager.InitializeDeck(player1);
         player1.TakeCards();
@@ -109,6 +114,7 @@ public class GameManager: MonoBehaviour
 
    public void PassTurn()
    {
+        clickSound.Play();
         playerOnTurn.passed = true;
         
         if (player1.passed && !player1.board.cardPlayed && player2.passed && !player2.board.cardPlayed )
@@ -266,6 +272,15 @@ public class GameManager: MonoBehaviour
         logicGame.player1.OnTurn=true;
         else
         logicGame.player2.OnTurn=false;
+    }
+    public void InsertCreatedByUserCards()
+    {
+        Evaluate evaluate = CompilerManager.instance.evaluator;
+        if(evaluate.createdCards is not null)
+            foreach (Card card in evaluate.createdCards)
+            {
+                LogicGameManager.CardDataBase.Add(card);
+            }
     }
 }
 

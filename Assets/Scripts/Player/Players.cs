@@ -16,12 +16,14 @@ public class Player:MonoBehaviour
     public List<CardData> deck;
     public List<GameObject> CardInstances;
     public List<GameObject> hand;
+    public List<GameObject> graveyard;
     public GameObject RoundPoint;
     public Text points; 
     public string faction;
     public Board board;
     public GameObject leader;
     public CardMover cardMover2D;
+    public ShuffleCards shuffle;
     public CardMover deleteMover;
     public Dictionary<int, GameObject> CardDictionary;
     public bool passed;
@@ -48,20 +50,19 @@ public class Player:MonoBehaviour
     {
         this.playername = playername;
         this.faction = faction;
-        
     }
     public void TakeCards()
     {
         foreach (GameObject card in CardInstances)
         {
-            if(card.GetComponent<CardDisplay>().row == Row.Leader)
+            if(card.GetComponent<CardDisplay>().cardData.rows.Contains(10))
             {
                 leader = card;
-                Debug.Log(card.GetComponent<CardDisplay>().cardname.text);
                 break;
             }
         }
         CardInstances.Remove(leader);
+        deck.Remove(leader.GetComponent<CardDisplay>().cardData);
         CardDictionary.Remove(leader.GetComponent<CardDisplay>().ID);
         StartCoroutine(SetLeaderAnimation(leader));
         leader.GetComponent<DragHandler>().enabled = false;
@@ -93,6 +94,7 @@ public class Player:MonoBehaviour
             }
             hand.Add(cards[0]);
             cards.RemoveAt(0);
+            GameManager.instance.logicGame.PlayerOnTurn().deck.Remove(GameManager.instance.logicGame.PlayerOnTurn().PlayerCardDictionary[cards[0].GetComponent<CardDisplay>().ID]);
         } 
     }
     public void HideOrShowCards()
@@ -139,12 +141,45 @@ public class Player:MonoBehaviour
         }
         card.transform.rotation = endRotation; 
     }
+    public void ShuffleCards(List<GameObject> row, GameObject container, List<int> order)
+    {
+        shuffle.UIShuffle(row,container,order);
+    }
     public void AddCardTo(List<GameObject> row,GameObject card)
     {   
         card.AddComponent<CardDropHandler>();
         row.Add(card);
-        hand.Remove(card);
         board.cardPlayed = true;
+        UpdateCardsPower(); 
+        UpdateCardWeather();
+        UpdateCardsinGame();
+        
+        points.text = GameManager.instance.logicGame.PlayerOnTurn().totalforce.ToString();
+        enemy.points.text = GameManager.instance.logicGame.PlayerOnTurn().GetEnemy().totalforce.ToString();
+    }
+    // Hace los cambios en la UI provocados por metodos de adicion como Add y SendB.
+    public void AddCardAfterEffect(int cardId, Transform container, List<GameObject> row)
+    {
+        Card card = LogicGameManager.CardDictionary[cardId];
+        Player owner = card.Owner == GameManager.instance.logicGame.player1?GameManager.instance.player1:GameManager.instance.player2;
+        GameObject cardInstance;
+        Vector2 Scale = new Vector2(0.0244f,0.0255f);
+        cardInstance = Instantiate(GameManager.instance.deckManager.cardPrefab,container);
+        cardInstance.transform.SetParent(container,false); 
+        cardInstance.transform.localScale = Scale;
+
+            // Configura los datos de la carta en el prefab 
+        CardDisplay display = cardInstance.GetComponent<CardDisplay>();
+        CardData cardData = ScriptableObject.CreateInstance<CardData>();
+        cardData.Initialize(card.Name,card.Faction,card.description,card.Power,card.currentRow,card.row,card.ID,owner);
+        if (display != null)
+        {
+            display.ApplyCardData(cardData);
+        }
+        row.Add(cardInstance);
+        owner.CardDictionary[card.ID] = cardInstance;
+        cardInstance.GetComponent<DragHandler>().enabled = false;
+
         UpdateCardsPower(); 
         UpdateCardWeather();
         UpdateCardsinGame();
@@ -159,19 +194,23 @@ public class Player:MonoBehaviour
         playerOnTurnRows.AddRange(board.attackRow);
         playerOnTurnRows.AddRange(board.distantRow);
         playerOnTurnRows.AddRange(board.siegeRow);
+        playerOnTurnRows.AddRange(hand);
+        playerOnTurnRows.AddRange(graveyard);
+
 
         List<GameObject> enemyrows = new List<GameObject>();
         enemyrows.AddRange(enemy.board.attackRow);
         enemyrows.AddRange(enemy.board.distantRow);
         enemyrows.AddRange(enemy.board.siegeRow);
-
+        enemyrows.AddRange(enemy.hand);
+        enemyrows.AddRange(enemy.graveyard);
         
         foreach (GameObject Card in playerOnTurnRows)
         {
             int CardID = Card.GetComponent<CardDisplay>().ID;
             GameLogic.Card logicard = GameManager.instance.logicGame.PlayerOnTurn().PlayerCardDictionary[CardID];
             int UIattackvalue= int.Parse((Card.GetComponent<CardDisplay>()).attackvalue.text);
-            int attackvalue = logicard.powerattack;
+            int attackvalue = logicard.Power;
             if(UIattackvalue!=attackvalue)
             {
                 Card.GetComponent<CardDisplay>().attackvalue.text = attackvalue.ToString();
@@ -182,7 +221,7 @@ public class Player:MonoBehaviour
             int CardID = Card.GetComponent<CardDisplay>().ID;
             GameLogic.Card logicard = GameManager.instance.logicGame.PlayerOnTurn().GetEnemy().PlayerCardDictionary[CardID];
             int UIattackvalue= int.Parse((Card.GetComponent<CardDisplay>()).attackvalue.text);
-            int attackvalue = logicard.powerattack;
+            int attackvalue = logicard.Power;
             if(UIattackvalue!=attackvalue)
             {
                 Card.GetComponent<CardDisplay>().attackvalue.text = attackvalue.ToString();
@@ -206,8 +245,6 @@ public class Player:MonoBehaviour
         GameManager.instance.logicGame.player1.cardstodelinUI.Clear();
         GameManager.instance.logicGame.player2.cardstodelinUI.Clear();
     }
-    
-    
     // Si una carta de unidad puede cambiar un clima esta funcion coloca un clon de la carta en la fila de cartas climas para evitar q se pueda colocar otro
     //clima en esa fila mientras ella este
     public void UpdateCardWeather()
@@ -232,15 +269,15 @@ public class Player:MonoBehaviour
     {
         GameObject WeatherRow =  GameManager.instance.WeatherRow;
         Transform parent = WeatherRow.transform;
-        switch (card.GetComponent<CardDisplay>().row)
+        switch (card.GetComponent<CardDisplay>().currentRow)
         {
-            case Row.attackRow:
+            case 1:
                 parent = parent.transform.GetChild(0).transform;
                 break;
-            case Row.distantRow:
+            case 2:
                 parent = parent.transform.GetChild(1).transform;
                 break;
-            case Row.siegeRow:
+            case 3:
                 parent = parent.transform.GetChild(2).transform;;
                 break;
         }
@@ -259,7 +296,6 @@ public class Player:MonoBehaviour
         foreach (int ID in cardid)
         {
            cardstodestroy.Add(player.CardDictionary[ID]);
-           Debug.Log("en el delete" + player.cardClones.Count());
            foreach(GameObject cardclone in player.cardClones)
            {
                 Debug.Log("clon " + cardclone.GetComponent<CardDisplay>().cardname);
@@ -272,29 +308,51 @@ public class Player:MonoBehaviour
         foreach (GameObject card in cardstodestroy)
         {            
             if (player.board.attackRow.Contains(card))
-                player.board.attackRow.Remove(card);
+            {
+                if (GameManager.instance.WeatherRow.transform.GetChild(0)==card)
+                GameManager.instance.weatherows[0]=false;  
+                player.board.attackRow.Remove(card); 
+            }
             else if (player.board.distantRow.Contains(card))
+            {
+                if (GameManager.instance.WeatherRow.transform.GetChild(1)==card)
+                GameManager.instance.weatherows[1]=false;  
                 player.board.distantRow.Remove(card);
-            else 
+            }
+            else if(player.board.distantRow.Contains(card))
+            {
                 player.board.siegeRow.Remove(card);
+                 if (GameManager.instance.WeatherRow.transform.GetChild(2)==card)
+                GameManager.instance.weatherows[2]=false;
+            }
+            else if(player.hand.Contains(card))
+            {
+                player.hand.Remove(card);
+            }
+            else if(player.graveyard.Contains(card))
+            {
+                player.hand.Remove(card);
+            }
+            player.graveyard.Add(card);
             
-            card.transform.SetParent(player.board.graveYard.transform);
-            card.transform.position = player.board.graveYard.transform.position;
+            card.transform.SetParent(player.board.graveYardContainer.transform);
+            card.transform.position = player.board.graveYardContainer.transform.position;
             card.transform.localScale = cardScale;
         }
         
         StartCoroutine(DeleteCardAnimation(cardstodestroy));        
-     //   StartCoroutine(DeleteCardAnimation(cardsclonesdestroy));
         cardid.Clear();
     }
     private IEnumerator DeleteCardAnimation(List<GameObject> cardstodelete)
     {
+        graveyard.AddRange(cardstodelete);
         foreach (GameObject card in cardstodelete)
         {
-            deleteMover.MoveCard(card,card.GetComponent<CardDisplay>().owner.board.graveYard.transform);
-            while (Vector3.Distance(card.transform.position, card.GetComponent<CardDisplay>().owner.board.graveYard.transform.position) > 0.01f)
+            board.graveyard.Add(card);
+            deleteMover.MoveCard(card,card.GetComponent<CardDisplay>().owner.board.graveYardContainer.transform);
+            while (Vector3.Distance(card.transform.position, card.GetComponent<CardDisplay>().owner.board.graveYardContainer.transform.position) > 0.01f)
             {
-                // Espera a que la carta llegue al graveyard antes de seguir
+                //Espera a que la carta llegue al graveyard antes de seguir
                 yield return null; 
             }  
         }

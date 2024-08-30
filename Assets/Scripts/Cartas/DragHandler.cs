@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -17,15 +18,16 @@ public class DragHandler : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginD
         startPosition = transform.position;
         startParent = transform.parent;
         potentialDragParent = startParent.Find("DragParent"); 
-        Row itemrow = itemDragging.GetComponent<CardDisplay>().row;
+        int itemrow = itemDragging.GetComponent<CardDisplay>().currentRow;
         if (potentialDragParent != null)
         {
             transform.SetParent(potentialDragParent);
         }
-        if(itemrow == Row.W_attack || itemrow == Row.W_distant || itemrow == Row.W_siege)
+        if(itemrow == 7 || itemrow == 8 || itemrow == 9)
         {
             GameManager.instance.WeatherRow.SetActive(true);
         }
+        itemDragging.GetComponent<CardDisplay>().owner.board.ShoworHideRow(itemDragging,1);
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -36,7 +38,7 @@ public class DragHandler : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginD
 
     public void OnEndDrag(PointerEventData eventData)
     {
-       
+        itemDragging.GetComponent<CardDisplay>().owner.board.ShoworHideRow(itemDragging,0);
         //Limpia la referencia estática al elemento arrastrado, señalando el fin de la operación de arrastre.
         GameManager.instance.WeatherRow.SetActive(false);
         itemDragging = null;

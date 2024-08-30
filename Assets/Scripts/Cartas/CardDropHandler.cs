@@ -29,7 +29,7 @@ public class CardDropHandler : MonoBehaviour, IDropHandler
             CardDisplay cardDisplay = eventData.pointerDrag.GetComponent<CardDisplay>();
             GameObject droppedCard = eventData.pointerDrag; 
             Card logiCurrentCard = GameManager.instance.logicGame.PlayerOnTurn().PlayerCardDictionary[gameObject.GetComponent<CardDisplay>().ID];
-            logicPlayer = logiCurrentCard.owner;
+            logicPlayer = logiCurrentCard.Owner;
             handTransform = droppedCard.GetComponent<DragHandler>().startParent;
             int cardID = cardDisplay.ID;
             Card logiCard = GameManager.instance.logicGame.PlayerOnTurn().PlayerCardDictionary[cardID];
@@ -55,12 +55,12 @@ public class CardDropHandler : MonoBehaviour, IDropHandler
                 gameObject.GetComponent<CardDisplay>().attackvalue.text = logiCurrentCard.initialPowerAttack.ToString();
 
                 //Elimina la carta del tablero de la logica y quita efectos provocado por esa carta en caso de existir
-                List<Card> row = logicPlayer.GetRow(logiCurrentCard.row);
-                Functions.RemuveSpecialCardsEfects(logiCurrentCard,row);
-                Functions.RemuveSpecialCardsEfects(logiCurrentCard,logicPlayer.GetEnemy().GetRow(logiCurrentCard.row));
+                List<Card> row = logicPlayer.GetRow(logiCurrentCard.currentRow);
+                Functions.RemoveEspecialCardEffect(logiCurrentCard,row);
+                Functions.RemoveEspecialCardEffect(logiCurrentCard,logicPlayer.GetEnemy().GetRow(logiCurrentCard.currentRow));
                 player.UpdateCardsPower();
-                logicPlayer.totalforce -= logiCurrentCard.powerattack;
-                logicPlayer.GetRow(logiCurrentCard.row).Remove(logiCurrentCard);
+                logicPlayer.totalforce -= logiCurrentCard.Power;
+                logicPlayer.GetRow(logiCurrentCard.currentRow).Remove(logiCurrentCard);
                 logicPlayer.hand.Add(logiCurrentCard);
                 if(player.cardClones.Contains(droppedCard))
                 {
@@ -72,22 +72,22 @@ public class CardDropHandler : MonoBehaviour, IDropHandler
                 //Agrega la carta senuelo en la logica
                 player.hand.Add(gameObject);
                 gameObject.GetComponent<CardDropHandler>().enabled = false;
-                if(logiCard.row==1)
+                if(logiCard.currentRow==1)
                 {
                     player.board.attackRow.Remove(gameObject);
-                    logicPlayer.AddtoBattleField(logiCard.ID,logiCurrentCard.row);
+                    logicPlayer.AddtoBattleField(logiCard.ID,logiCurrentCard.currentRow);
                     player.AddCardTo(player.board.attackRow,droppedCard);
                 }
-                else if (logiCard.row==2)
+                else if (logiCard.currentRow==2)
                 {
                     player.board.distantRow.Remove(gameObject);
-                    logicPlayer.AddtoBattleField(logiCard.ID,logiCurrentCard.row);
+                    logicPlayer.AddtoBattleField(logiCard.ID,logiCurrentCard.currentRow);
                     player.AddCardTo(player.board.distantRow,droppedCard);
                 }
                 else
                 {
                     player.board.siegeRow.Remove(gameObject);
-                    logicPlayer.AddtoBattleField(logiCard.ID,logiCurrentCard.row);
+                    logicPlayer.AddtoBattleField(logiCard.ID,logiCurrentCard.currentRow);
                     player.AddCardTo(player.board.siegeRow,droppedCard);
                 }
                 

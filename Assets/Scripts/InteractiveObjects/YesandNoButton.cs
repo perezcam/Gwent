@@ -6,11 +6,13 @@ using UnityEngine.EventSystems;
 public class YesandNoButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public GameObject Indicator;
+    public AudioSource pop;
 
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (eventData.pointerEnter != null)
         {
+            pop.Play();
             Indicator.SetActive(true);
         }
     }

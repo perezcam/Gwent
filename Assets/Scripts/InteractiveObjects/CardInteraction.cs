@@ -9,6 +9,7 @@ public class CardInteraction : MonoBehaviour, IPointerEnterHandler, IPointerExit
     private static int selectedCount = 0;
     public static List<CardInteraction> selectedCards = new List<CardInteraction>();
     private int originalLayer;
+    public AudioSource cardSelect;
     void Awake()
     {
         originalScale = transform.localScale; 
@@ -35,6 +36,8 @@ public class CardInteraction : MonoBehaviour, IPointerEnterHandler, IPointerExit
     }
     public void OnPointerClick(PointerEventData eventData)
     {
+        cardSelect = GameManager.instance.cardSelect;
+        cardSelect.Play();
         if (isSelected)
         {
             isSelected = false;

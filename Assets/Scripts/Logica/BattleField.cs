@@ -34,6 +34,14 @@ namespace GameLogic
            On_W_siegerow = 0;
           return totalBattleField;
       } 
+      public List<Card> AllCard()
+      {
+            List<Card> field = new List<Card>();
+            field.AddRange(contactrow);
+            field.AddRange(distantrow);
+            field.AddRange(siegerow);
+            return field;
+      }
        public void SetWeather (List<Card> row, int type)
        {
           if(row == contactrow)

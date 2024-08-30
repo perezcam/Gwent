@@ -8,19 +8,19 @@
     ".NETStandard,Version=v2.1": []
   },
   "packageFolders": {
-    "/home/frankperez/.nuget/packages/": {}
+    "/home/camiloperez/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/media/frankperez/Local Disk/Gwent/GWENT-2D/Assembly-CSharp.csproj",
+      "projectUniqueName": "/media/camiloperez/New Volume/CamiloGwent/Gwent/GWENT-2D/Assembly-CSharp.csproj",
       "projectName": "Assembly-CSharp",
-      "projectPath": "/media/frankperez/Local Disk/Gwent/GWENT-2D/Assembly-CSharp.csproj",
-      "packagesPath": "/home/frankperez/.nuget/packages/",
-      "outputPath": "/media/frankperez/Local Disk/Gwent/GWENT-2D/Temp/obj/Debug/Assembly-CSharp/",
+      "projectPath": "/media/camiloperez/New Volume/CamiloGwent/Gwent/GWENT-2D/Assembly-CSharp.csproj",
+      "packagesPath": "/home/camiloperez/.nuget/packages/",
+      "outputPath": "/media/camiloperez/New Volume/CamiloGwent/Gwent/GWENT-2D/Temp/obj/Debug/Assembly-CSharp/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/home/frankperez/.nuget/NuGet/NuGet.Config"
+        "/home/camiloperez/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "netstandard2.1"
@@ -38,11 +38,6 @@
         "warnAsError": [
           "NU1605"
         ]
-      },
-      "restoreAuditProperties": {
-        "enableAudit": "true",
-        "auditLevel": "low",
-        "auditMode": "direct"
       }
     },
     "frameworks": {
@@ -59,7 +54,7 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.202/RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.108/RuntimeIdentifierGraph.json"
       }
     }
   }

@@ -13,6 +13,7 @@ public class FactionSelection : MonoBehaviour, IPointerEnterHandler, IPointerExi
     private Vector3 finalScale;
     private Vector3 originalPosition;
     public string FactionName;
+    public AudioSource clickSound;
 
     void Start()
     {
@@ -44,6 +45,7 @@ public class FactionSelection : MonoBehaviour, IPointerEnterHandler, IPointerExi
         finalScale = originalScale*scaleFactor;
         eventData.pointerClick.GetComponent<FactionSelection>().enabled = false;
         eventData.pointerClick.transform.localScale = finalScale;
+        clickSound.Play();
         
     }
     void Update ()

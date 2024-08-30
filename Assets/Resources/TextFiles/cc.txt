@@ -1,0 +1,66 @@
+                        effect
+                        {
+			    Name : "Draw",
+			    Action: (targets,context) => 
+			    { 
+                                i = 0;
+                                while(i<5)
+                                {
+     				     context.Board.Add(context.Hand[i]);
+				     context.Hand.Shuffle();
+                                     i++;
+                                     FieldOfPlayer(TriggerPlayer).Add(context.Hand[i]);
+                                };
+			    }
+			}
+			//le resta 2 puntos durante 2 iteraciones
+			effect 
+			{
+			    Name: "Damage",
+			    Params: 
+			    {
+				Amount: Number,
+			    },
+			    Action: (targets, context) =>
+			    {
+				for (target in targets) 
+				{
+				    i = 0;
+				   while(i++ < Amount)
+				   {
+				        target.Power -= 2
+				        ;
+				        //i++
+				   };
+				};
+			    }
+			}
+			card
+			{
+			    Type: "Oro",
+			    Name: "Beluga"@@"Azul",
+			    Faction: "Titans",
+			    Power: 10,
+			    Range: ["Melee","Ranged"],
+			    OnActivation:
+			    [
+				{
+				    Effect: 
+				    {
+				        Name: "Damage",
+				        Amount: 2,
+				    },
+				    Selector:
+				    {	
+				        Source: "hand",
+				        Single: false,
+				        Predicate: (unit) => unit.Power == 10
+				    },
+				    PostAction:
+				    {
+				        Effect: "Draw",
+				    }
+
+				}
+			    ]
+			}

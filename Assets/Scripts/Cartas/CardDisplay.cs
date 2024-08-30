@@ -12,7 +12,7 @@ public class CardDisplay : MonoBehaviour
      public TextMeshProUGUI description;
     public Image cardImage;
     public TextMeshProUGUI attackvalue;
-    public Row row;
+    public int currentRow;
     public int ID;
     public Player owner;
     public void ApplyCardData(CardData cardData)
@@ -23,10 +23,10 @@ public class CardDisplay : MonoBehaviour
             description.text = cardData.description;
             attackvalue.text = cardData.attack.ToString();
             cardImage.sprite = cardData.imageSprite;
-            row=cardData.row;
+            currentRow = cardData.currentRow;
             ID = cardData.ID;
             owner = cardData.owner;
-
+            this.cardData = cardData;
         }
         else
         {

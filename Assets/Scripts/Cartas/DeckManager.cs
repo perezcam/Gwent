@@ -14,6 +14,8 @@ using System.Runtime.CompilerServices;
 using System.Collections;
 using UnityEngine.UI;
 using GameLogic;
+using System.Net.Http.Headers;
+using Unity.Mathematics;
 
 
 
@@ -22,11 +24,10 @@ public class DeckManager: MonoBehaviour
     public  List<CardData> HumanityDeck;
     public  List<CardData> TitansDeck;
     public GameObject ClonedHand;
-    private GameObject cardPrefab; 
+    public GameObject cardPrefab; 
     private Vector2 cardScale = new Vector2(0.0244f,0.0255f);
     public Player playerOnTurn;
     public PanelFader blurPanel;
-
     public DeckManager(CardLists cardLists)
     {
         HumanityDeck = cardLists.HumanityDeck;
@@ -43,7 +44,7 @@ public class DeckManager: MonoBehaviour
      }
     
     //metodo Fisher Yates para barajear
-    private void Shuffle<T>(List<T> list)
+    public static void Shuffle<T>(List<T> list)
     {
         for (int i = 0; i < list.Count; i++)
         {
@@ -130,6 +131,33 @@ public class DeckManager: MonoBehaviour
             }
    
         }
+    }
+    public static int GetRow(Row row)
+    {
+        switch (row)
+        {
+            case Row.attackRow:
+                return 1;
+            case Row.IattackRow:
+                return 2;
+            case Row.distantRow:
+                return 3;
+            case Row.IdistantRow:
+                return 4;
+            case Row.siegeRow:
+                return 5;
+            case Row.IsiegeRow:
+                return 6;  
+            case Row.W_attack:
+                return 7;
+            case Row.W_distant:
+                return 8;
+            case Row.W_siege:
+                return 9;  
+            case Row.Leader:
+                return 10;
+        }
+        return 0;
     }
    
 } 

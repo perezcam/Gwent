@@ -12,6 +12,8 @@ public class PlayAgainSystem : MonoBehaviour
     public UnityEngine.UI.Button yesButton;
     public UnityEngine.UI.Button noButton;
     public GameObject WinImage;
+    public AudioSource GameOverSound;
+    public GameObject GameOverImage;
 
     void Start()
     {
@@ -21,6 +23,7 @@ public class PlayAgainSystem : MonoBehaviour
         yesButton.gameObject.SetActive(false);
         noButton.gameObject.SetActive(false);
         WinImage.SetActive(false);
+        GameOverImage.SetActive(false);
     }
 
 
@@ -30,6 +33,8 @@ public class PlayAgainSystem : MonoBehaviour
         playAgainPanel.SetActive(true);
         yesButton.gameObject.SetActive(true);
         noButton.gameObject.SetActive(true);
+        GameOverSound.Play();
+        GameOverImage.SetActive(true);
     }
     //Reiniciar juego
     public void OnClickYes()

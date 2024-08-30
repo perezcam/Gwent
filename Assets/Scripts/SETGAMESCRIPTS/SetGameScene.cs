@@ -18,6 +18,7 @@ public class SetGameScene : MonoBehaviour
     private bool player1seted;
     private bool player2seted;
     public SceneManagement changescene;
+    public AudioSource clickSound;
     void Awake() 
     {
         player2.GetComponent<SetPlayer>().titanfaction.GetComponent<FactionSelection>().enabled = false;
@@ -85,6 +86,7 @@ public class SetGameScene : MonoBehaviour
     //para el boton de cambio
     public void DisablePlayer()
     {  
+        clickSound.Play();
         currentScene.SetActive(false);
         gameData.GetComponent<DataBase>().name1 = player1.GetComponent<SetPlayer>().label;
         gameData.GetComponent<DataBase>().faction1 = player1.GetComponent<SetPlayer>().faction;

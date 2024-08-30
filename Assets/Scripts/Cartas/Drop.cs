@@ -5,7 +5,8 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using UnityEngine.TextCore.LowLevel;
+using GameLogic;
+
 public enum Row
 {
     attackRow,IattackRow,distantRow,IdistantRow,siegeRow,IsiegeRow,Null,Leader,W_attack,W_distant,W_siege,
@@ -21,33 +22,40 @@ public class Drop : MonoBehaviour, IDropHandler
     {
         GameObject droppedCard = eventData.pointerDrag; 
         DragHandler dragHandler = droppedCard.GetComponent<DragHandler>();
-        Row cardrow = droppedCard.GetComponent<CardDisplay>().row;
         Player cardOwner = droppedCard.GetComponent<CardDisplay>().owner;
+        CardData droppedCardData = droppedCard.GetComponent<CardDisplay>().cardData;
+        droppedCard.GetComponent<CardDisplay>().owner.board.ShoworHideRow(droppedCard,0);
 
         switch (row)
         {
             case Row.attackRow:
                 itemsDropped = player.board.attackRow;
+                droppedCardData.currentRow = 1;
                 break;
             case Row.distantRow:
                 itemsDropped = player.board.distantRow;
+                droppedCardData.currentRow = 3;
                 break;
             case Row.siegeRow:
                 itemsDropped = player.board.siegeRow; 
+                droppedCardData.currentRow = 5;
                 break;
             case Row.IattackRow:
                 itemsDropped = player.board.IattackRow;
+                droppedCardData.currentRow = 2;
                 break;
             case Row.IdistantRow:
                 itemsDropped = player.board.IdistantRow;
+                droppedCardData.currentRow = 4;
                 break;
             case Row.IsiegeRow:
                 itemsDropped = player.board.IsiegeRow;
+                droppedCardData.currentRow = 6;
                 break;
         }
         
       
-        if(cardOwner!= player ||cardrow!=row||((cardrow==Row.IattackRow||cardrow==Row.IdistantRow||cardrow==Row.IsiegeRow) && itemsDropped.Count==1)||itemsDropped.Count >= 7) 
+        if(cardOwner!= player || !droppedCardData.rows.Contains(DeckManager.GetRow(row))||((droppedCardData.currentRow == 2||droppedCardData.currentRow ==4||droppedCardData.currentRow ==6) && itemsDropped.Count==1)||itemsDropped.Count >= 7) 
         {
             droppedCard.transform.position = dragHandler.startPosition;
             droppedCard.transform.SetParent(dragHandler.startParent, false);
@@ -59,7 +67,8 @@ public class Drop : MonoBehaviour, IDropHandler
             int droppedid = (droppedCard.GetComponent<CardDisplay>()).ID;
             if (droppedCard != null)
             {  
-                 GameLogic.Card logicCard = GameManager.instance.logicGame.PlayerOnTurn().PlayerCardDictionary[droppedid];
+                GameLogic.Card logicCard = GameManager.instance.logicGame.PlayerOnTurn().PlayerCardDictionary[droppedid];
+                player.hand.Remove(droppedCard);
                 switch (row)
                 {   
                     case Row.attackRow: 

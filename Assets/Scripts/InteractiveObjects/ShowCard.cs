@@ -31,12 +31,12 @@ public class CardHoverDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExi
         copy.description.text = original.description.text;
         copy.attackvalue.text = original.attackvalue.text;
         copy.cardImage.sprite =  original.cardImage.sprite;
-        copy.row=original.row;
+        copy.currentRow=original.currentRow;
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
- //       gameObject.transform.localScale = originalScale;
+        //gameObject.transform.localScale = originalScale;
         if (instantiatedCard != null)
         {
             Destroy(instantiatedCard);

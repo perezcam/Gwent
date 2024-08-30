@@ -226,7 +226,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &8378620987911830198
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -242,11 +242,12 @@ MonoBehaviour:
   cardData: {fileID: 0}
   cardname: {fileID: 8735116785307822681}
   cardBody: {fileID: 8916836035560360975}
-  powerattack: {fileID: 9005430868405587520}
   description: {fileID: 1827184938187764028}
   cardImage: {fileID: 6779342600849353882}
   attackvalue: {fileID: 9005430868405587520}
-  row: 0
+  currentRow: 0
+  ID: 0
+  owner: {fileID: 0}
 --- !u!114 &1592237218758848184
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -293,11 +294,12 @@ MonoBehaviour:
   cardData: {fileID: 0}
   cardname: {fileID: 0}
   cardBody: {fileID: 0}
-  powerattack: {fileID: 0}
   description: {fileID: 0}
   cardImage: {fileID: 0}
   attackvalue: {fileID: 0}
-  row: 0
+  currentRow: 0
+  ID: 0
+  owner: {fileID: 0}
 --- !u!1 &3087500166139207116
 GameObject:
   m_ObjectHideFlags: 0
