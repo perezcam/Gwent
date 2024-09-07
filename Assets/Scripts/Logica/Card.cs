@@ -6,7 +6,7 @@ using System.Security.Cryptography.X509Certificates;
 namespace GameLogic
 {
     // type 0 => carta de unidad, type 1=> carta especial type 2 => carta heroe,type 3 => carta lider ,type 4=> decoy card
-    // row 1 => contact row 2 => distant  row3=> siege row0 => hand row4 => graveyard row5 => deck
+    // row 1 => contact row 2 => distant  row3=> siege row0 => hand row4 => graveyard row5 => deck row7 => Wattack row8 => Wdistant row9 => Wsiege
     
     public class Card
     {

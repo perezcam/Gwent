@@ -275,12 +275,15 @@ public class GameManager: MonoBehaviour
     }
     public void InsertCreatedByUserCards()
     {
-        Evaluate evaluate = CompilerManager.instance.evaluator;
-        if(evaluate.createdCards is not null)
-            foreach (Card card in evaluate.createdCards)
-            {
-                LogicGameManager.CardDataBase.Add(card);
-            }
+        if(CompilerManager.instance is not null && CompilerManager.instance.evaluator is not null)
+        {
+            Evaluate evaluate = CompilerManager.instance.evaluator;
+            if(evaluate.createdCards is not null)
+                foreach (Card card in evaluate.createdCards)
+                {
+                    LogicGameManager.CardDataBase.Add(card);
+                }
+        }
     }
 }
 

@@ -98,6 +98,8 @@ namespace Interpeter
                     return 6;
                 case "Lider":
                     return 3;
+                case "Senuelo":
+                    return 4;
             }
             return -1;
         }
@@ -180,8 +182,15 @@ namespace Interpeter
                 node.Collection.Accept(this,scope);
                 Collection = (List<Card>)node.Collection.Value;
             }
+            int counter = 0;
             for (int i = 0; i < Collection.Count; i++)
             {
+                if(counter >13634)
+                {
+                    GameManager.instance.errorReporter.ShowError("El ciclo excedio las 13634 operaciones y se detuvo el efecto");
+                    break;
+                }
+                counter ++;
                 //Actualiza el target del foreach de la DSL
                 scope.Values[(node.Variable as IdentifierNode).Name] = Collection[i];
                 node.Body.Accept(this,scope);
@@ -190,9 +199,16 @@ namespace Interpeter
 
         public void Visit(WhileStatementNode node, Scope scope)
         {
+            int counter = 0;
             node.Condition.Accept(this,scope);
             while((bool)node.Condition.Value)
             {
+                if(counter >13634)
+                {
+                    GameManager.instance.errorReporter.ShowError("El ciclo excedio las 13634 operaciones y se detuvo el efecto");
+                    break;
+                }
+                counter ++;
                 node.Body.Accept(this,scope);
                 node.Condition.Accept(this,scope);
             }
@@ -237,7 +253,7 @@ namespace Interpeter
                     node.Value = (int)node.Left.Value * (int)node.Left.Value;
                     break;
                 case TokenType.Divide:
-                    if((int)node.Left.Value == 0)
+                    if((int)node.Right.Value == 0)
                         GameManager.instance.errorReporter.ShowError($"Intento de division por cero en fila {node.Right.row}");
                     node.Value = (int)node.Left.Value / (int)node.Left.Value;
                     break;
@@ -251,14 +267,30 @@ namespace Interpeter
             bool rightFlag = false;
             if(node.Left is UnaryExpressionNode leftExpression && leftExpression.Atend)
             {
-                scope.Values[(leftExpression.Operand as IdentifierNode).Name] = (int)scope.Values[(leftExpression.Operand as IdentifierNode).Name]-1; 
-                node.Left.Value = scope.Values[(leftExpression.Operand as IdentifierNode).Name];
+                if(leftExpression.Operator is TokenType.PlusPlus)
+                {
+                    scope.Values[(leftExpression.Operand as IdentifierNode).Name] = (int)scope.Values[(leftExpression.Operand as IdentifierNode).Name]-1; 
+                    node.Left.Value = scope.Values[(leftExpression.Operand as IdentifierNode).Name];
+                }
+                else
+                {
+                    scope.Values[(leftExpression.Operand as IdentifierNode).Name] = (int)scope.Values[(leftExpression.Operand as IdentifierNode).Name]+1; 
+                    node.Left.Value = scope.Values[(leftExpression.Operand as IdentifierNode).Name];
+                }
                 leftFlag = true;
             }
             if(node.Right is UnaryExpressionNode rightExpression && rightExpression.Atend)
             {
-                scope.Values[(rightExpression.Operand as IdentifierNode).Name] = (int)scope.Values[(rightExpression.Operand as IdentifierNode).Name]-1; 
-                node.Right.Value = scope.Values[(rightExpression.Operand as IdentifierNode).Name];
+                if(rightExpression.Operator is TokenType.PlusPlus)
+                {
+                    scope.Values[(rightExpression.Operand as IdentifierNode).Name] = (int)scope.Values[(rightExpression.Operand as IdentifierNode).Name]-1; 
+                    node.Left.Value = scope.Values[(rightExpression.Operand as IdentifierNode).Name];
+                }
+                else
+                {
+                    scope.Values[(rightExpression.Operand as IdentifierNode).Name] = (int)scope.Values[(rightExpression.Operand as IdentifierNode).Name]+1; 
+                    node.Right.Value = scope.Values[(rightExpression.Operand as IdentifierNode).Name];
+                }
                 rightFlag = true;
             }
             switch (node.Operator)
@@ -290,12 +322,18 @@ namespace Interpeter
             }
             if(leftFlag)
             {
-                scope.Values[((node.Left as UnaryExpressionNode).Operand as IdentifierNode).Name] = (int)scope.Values[((node.Left as UnaryExpressionNode).Operand as IdentifierNode).Name]+1; 
+                if((node.Left as UnaryExpressionNode).Operator is TokenType.PlusPlus)
+                    scope.Values[((node.Left as UnaryExpressionNode).Operand as IdentifierNode).Name] = (int)scope.Values[((node.Left as UnaryExpressionNode).Operand as IdentifierNode).Name]+1; 
+                else
+                    scope.Values[((node.Left as UnaryExpressionNode).Operand as IdentifierNode).Name] = (int)scope.Values[((node.Left as UnaryExpressionNode).Operand as IdentifierNode).Name]-1; 
                 // node.Left.Value = (int)node.Left.Value +1;
             }
             if(rightFlag)
             {
-                scope.Values[((node.Right as UnaryExpressionNode).Operand as IdentifierNode).Name] = (int)scope.Values[((node.Right as UnaryExpressionNode).Operand as IdentifierNode).Name]+1;
+                if((node.Left as UnaryExpressionNode).Operator is TokenType.MinusMinus)
+                    scope.Values[((node.Right as UnaryExpressionNode).Operand as IdentifierNode).Name] = (int)scope.Values[((node.Right as UnaryExpressionNode).Operand as IdentifierNode).Name]+1;
+                else
+                    scope.Values[((node.Right as UnaryExpressionNode).Operand as IdentifierNode).Name] = (int)scope.Values[((node.Right as UnaryExpressionNode).Operand as IdentifierNode).Name]-1;             
                 // node.Right.Value = (int)node.Left.Value +1; 
             }
         }
@@ -303,9 +341,8 @@ namespace Interpeter
            
             IdentifierNode operand = node.Operand as IdentifierNode;
             if(node.Operator is TokenType.PlusPlus)
-            {
+
                 scope.Values[operand.Name] = (int)scope.Values[operand.Name] + 1;
-            }
             else
                 scope.Values[operand.Name] = (int)scope.Values[operand.Name] - 1;
         }
@@ -484,7 +521,7 @@ namespace Interpeter
             List<Type> argumentTypes = node.Arguments.Select(a => a.Value.GetType()).ToList();
             List<object> argumentValues = node.Arguments.Select(a => a.Value).ToList();
 
-            // logica para adicionar a board o field debido a la flata de especificacion de fila en la DSL
+            // logica para adicionar a board o field debido a la falta de especificacion de fila en la DSL
             if (node.MethodName.Name == "Add" || node.MethodName.Name == "SendBottom"  || node.MethodName.Name == "Push")
             {
                 GameLogic.Player player = GameManager.instance.logicGame.PlayerOnTurn();
@@ -513,17 +550,20 @@ namespace Interpeter
                 if(location == "FieldOfPlayer" && !turnPlayer)
                 {
                     GameManager.instance.errorReporter.ShowError("Intento agregar una carta al contenido del enemigo y solo puede agregar cartas en las filas propias");
+                    return;
                 }
                 if((location == "Hand" || location == "hand" || location == "HandOfPlayer") && (targetObject as List<Card>).Count > 10 )
                 {
                     GameManager.instance.errorReporter.ShowError("No es posible agregar mas cartas a la mano elegida");
+                    return;
                 }
             }
             else if(node.MethodName.Name == "Shuffle")
             {
                 if(location == "board" || location == "field"|| location == "FieldofPlayer")
                 {
-                    GameManager.instance.errorReporter.ShowError("No es posible agregar esa carta a la zona especificada");
+                    GameManager.instance.errorReporter.ShowError("No es posible reordenar la zona especificada");
+                    return;
                 }
             }
             if(targetObject is not null)
@@ -536,10 +576,9 @@ namespace Interpeter
             node.Value = result;
         }   
         #region MethodsRegion
-        public void Add(Card Card, List<Card> target)
+        public void Add(Card Card, List<Card> target,bool top = false)
         {
             //Genera una nueva carta con los datos de la original que le dio origen pero con un nuevo ID
-            
             Card card = Card.Clone();
             card.ID = GameManager.instance.logicGame.currentID ++;
             if(createdCardsNode.ContainsKey(Card.ID))
@@ -558,7 +597,7 @@ namespace Interpeter
                 card.currentRow = 1;
                 player1.PlayerCardDictionary[card.ID] = card;
                 player1.ActiveCard(card,player1.battleField.contactrow);
-                player1.AddCardTo(card, player1.battleField.contactrow);
+                player1.AddCardTo(card, player1.battleField.contactrow,top);
                 UIplayer1.AddCardAfterEffect(card.ID,UIplayer1.board.attackContainer.transform,UIplayer1.board.attackRow);
             }
             else if(target == player1.battleField.distantrow)
@@ -568,7 +607,7 @@ namespace Interpeter
                 card.Owner = player1;
                 player1.PlayerCardDictionary[card.ID] = card;
                 player1.ActiveCard(card,player1.battleField.distantrow);
-                player1.AddCardTo(card, player1.battleField.distantrow);
+                player1.AddCardTo(card, player1.battleField.distantrow,top);
                 UIplayer1.AddCardAfterEffect(card.ID,UIplayer1.board.distantContainer.transform,UIplayer1.board.distantRow);
             }
             else if(target == player1.battleField.siegerow)
@@ -578,7 +617,7 @@ namespace Interpeter
                 card.Owner = player1;
                 player1.PlayerCardDictionary[card.ID] = card;
                 player1.ActiveCard(card,player1.battleField.siegerow);
-                player1.AddCardTo(card, player1.battleField.siegerow);
+                player1.AddCardTo(card, player1.battleField.siegerow,top);
                 UIplayer1.AddCardAfterEffect(card.ID,UIplayer1.board.siegeContainer.transform,UIplayer1.board.siegeRow);
             }
             else if(target == player2.battleField.contactrow)
@@ -588,7 +627,7 @@ namespace Interpeter
                 card.Owner = player2;
                 player2.PlayerCardDictionary[card.ID] = card;
                 player2.ActiveCard(card,player2.battleField.contactrow);
-                player2.AddCardTo(card, player2.battleField.contactrow);
+                player2.AddCardTo(card, player2.battleField.contactrow,top);
                 UIplayer2.AddCardAfterEffect(card.ID,UIplayer2.board.attackContainer.transform,UIplayer2.board.attackRow);
             }
             else if(target == player2.battleField.distantrow)
@@ -598,7 +637,7 @@ namespace Interpeter
                 card.Owner = player2;
                 player2.PlayerCardDictionary[card.ID] = card;
                 player2.ActiveCard(card,player2.battleField.distantrow);
-                player2.AddCardTo(card,player2.battleField.distantrow);
+                player2.AddCardTo(card,player2.battleField.distantrow,top);
                 UIplayer2.AddCardAfterEffect(card.ID,UIplayer2.board.distantContainer.transform,UIplayer2.board.distantRow);
             }
             else if(target == player2.battleField.siegerow)
@@ -608,67 +647,79 @@ namespace Interpeter
                 card.Owner = player2;
                 player2.PlayerCardDictionary[card.ID] = card;
                 player2.ActiveCard(card,player2.battleField.siegerow);
-                player2.AddCardTo(card, player2.battleField.siegerow);
+                player2.AddCardTo(card, player2.battleField.siegerow,top);
                 UIplayer2.AddCardAfterEffect(card.ID,UIplayer2.board.siegeContainer.transform,UIplayer2.board.siegeRow);
             }
             else if(target == player1.hand)
             {
-                player1.totalforce += card.Power;
                 card.currentRow = 0;
                 card.Owner = player1;
                 player1.PlayerCardDictionary[card.ID] = card;
-                player1.hand.Add(card);
+                if(top)
+                    player1.hand.Prepend(card);
+                else
+                    player1.hand.Add(card);
                 UIplayer1.AddCardAfterEffect(card.ID,UIplayer1.board.handcontainer.transform,UIplayer1.hand);
             }
             else if( target == player2.hand)
             {
-                player2.totalforce += card.Power;
                 card.currentRow = 0;
                 card.Owner = player2;
                 player2.PlayerCardDictionary[card.ID] = card;
-                player2.hand.Add(card);
+                if(top)
+                    player2.hand.Prepend(card);
+                else
+                    player2.hand.Add(card);
                 UIplayer2.AddCardAfterEffect(card.ID,UIplayer2.board.handcontainer.transform,UIplayer2.hand);
             }
             else if( target == player1.battleField.graveyard)
             {
-                player1.totalforce += card.Power;
                 card.currentRow = 4;
                 card.Owner = player1;
                 player1.PlayerCardDictionary[card.ID] = card;
-                player1.battleField.graveyard.Add(card);
+                if(top)
+                    player1.battleField.graveyard.Prepend(card);
+                else
+                    player1.battleField.graveyard.Add(card);
                 UIplayer1.AddCardAfterEffect(card.ID,UIplayer1.board.graveYardContainer.transform,UIplayer1.board.graveyard);
             }
             else if(target == player2.battleField.graveyard)
             {
-                player2.totalforce += card.Power;
                 card.currentRow = 4;
                 card.Owner = player2;
                 player2.PlayerCardDictionary[card.ID] = card;
-                player1.battleField.graveyard.Add(card);
+                if(top)
+                    player1.battleField.graveyard.Prepend(card);
+                else
+                    player1.battleField.graveyard.Add(card);
                 UIplayer2.AddCardAfterEffect(card.ID,UIplayer2.board.graveYardContainer.transform,UIplayer2.board.graveyard);
             }
             else if(target == player1.deck)
             {
-                player1.totalforce += card.Power;
                 card.Owner = player1;
                 card.currentRow = 5;
                 player1.PlayerCardDictionary[card.ID] = card;
+                if(top)
+                    player1.deck.Prepend(card);
+                else
                 player1.deck.Add(card);
                 UIplayer1.AddCardAfterEffect(card.ID,UIplayer1.board.deckcontainer.transform,UIplayer1.CardInstances);
             }
             else if(target == player2.deck)
             {
-                player2.totalforce += card.Power;
                 card.Owner = player2;
                 card.currentRow = 5;
                 player2.PlayerCardDictionary[card.ID] = card;
-                player2.deck.Add(card);
+                if(top)
+                    player2.deck.Prepend(card);
+                else
+                    player2.deck.Add(card);
                 UIplayer2.AddCardAfterEffect(card.ID,UIplayer2.board.deckcontainer.transform,UIplayer2.CardInstances);
             }
         }
         public void Push(Card card, List<Card> target)
         {
-            target.Add(card);
+            this.Add(card,target,false);
         }
         public List<Card> HandOfPlayer(GameLogic.Player player)
         {
@@ -688,18 +739,21 @@ namespace Interpeter
         }
         public Card Pop(List<Card> target)
         {
-            Card cardret;
-            cardret = target[0];
             if(target.Count == 0)
+            {
                 GameManager.instance.errorReporter.ShowError("No hay cartas en la coleccion indicada");
+                return null;
+            }
+            Card cardret;
+            cardret = target.Last();
             cardret.Owner.cardstodelinUI.Add(cardret.ID);
             cardret.Owner.battleField.graveyard.Add(cardret);
-            target.RemoveAt(0);
+            target.RemoveAt(target.Count-1);
             return cardret;
         }
         public void SendBottom(Card card,List<Card> target)
         {
-            this.Add(card,target);
+            this.Add(card,target,true);
         }
         public void Remove(Card card,List<Card> target)
         {

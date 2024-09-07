@@ -4,12 +4,8 @@
 			    Action: (targets,context) => 
 			    { 
                                 i = 0;
-                                while(i<5)
-                                {
-     				     context.Board.Push(context.Hand[i]);
-				     context.Hand.Shuffle();
-                                     i++;
-                                };
+                                context.Hand.Find((x) => x.Power == 5);
+                                
 			    }
 			}
 			//le resta 2 puntos durante 2 iteraciones
@@ -29,6 +25,7 @@
 				   {
 				        target.Power -= 2
 				        ;
+                                        context.Board.Add(target);
 				        //i++
 				   };
 				};

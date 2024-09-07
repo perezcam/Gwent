@@ -18,7 +18,7 @@ public class DragHandler : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginD
         startPosition = transform.position;
         startParent = transform.parent;
         potentialDragParent = startParent.Find("DragParent"); 
-        int itemrow = itemDragging.GetComponent<CardDisplay>().currentRow;
+        int itemrow = itemDragging.GetComponent<CardDisplay>().cardData.rows[0];
         if (potentialDragParent != null)
         {
             transform.SetParent(potentialDragParent);

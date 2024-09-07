@@ -204,6 +204,7 @@
   <ItemGroup>
     <None Include="Assets/TextMesh Pro/Shaders/TMPro.cginc" />
     <None Include="Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile Overlay.shader" />
+    <None Include="Assets/Resources/TextFiles/111.txt" />
     <None Include="Assets/LeanTween/ReadMe.txt" />
     <None Include="Assets/TextMesh Pro/Shaders/TMP_Bitmap.shader" />
     <None Include="Assets/TextMesh Pro/Examples &amp; Extras/Fonts/Oswald-Bold - OFL.txt" />
@@ -211,8 +212,10 @@
     <None Include="Assets/TextMesh Pro/Shaders/TMPro_Mobile.cginc" />
     <None Include="Assets/LeanTween/License.txt" />
     <None Include="Assets/TextMesh Pro/Shaders/TMP_SDF SSD.shader" />
+    <None Include="Assets/Resources/TextFiles/Generic Test.txt" />
     <None Include="Assets/TextMesh Pro/Shaders/TMP_SDF-Surface-Mobile.shader" />
     <None Include="Assets/Resources/TextFiles/Cam.txt" />
+    <None Include="Assets/Resources/TextFiles/maura.txt" />
     <None Include="Assets/Resources/TextFiles/z.txt" />
     <None Include="Assets/Resources/TextFiles/cc.txt" />
     <None Include="Assets/TextMesh Pro/Shaders/TMP_SDF-Surface.shader" />
@@ -226,12 +229,14 @@
     <None Include="Assets/TextMesh Pro/Examples &amp; Extras/Fonts/FONTLOG.txt" />
     <None Include="Assets/TextMesh Pro/Shaders/TMPro_Surface.cginc" />
     <None Include="Assets/Resources/TextFiles/-Nombre del Archivo-.txt" />
+    <None Include="Assets/Resources/TextFiles/qqq.txt" />
     <None Include="Assets/TextMesh Pro/Resources/LineBreaking Following Characters.txt" />
     <None Include="Assets/LeanTween/Examples/Archived/2dUnlitWithFade.shader" />
     <None Include="Assets/Resources/Fonts/FONTLOG.txt" />
     <None Include="Assets/Resources/Fonts/LICENSE.txt" />
     <None Include="Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile Masking.shader" />
     <None Include="Assets/TextMesh Pro/Shaders/TMP_SDF Overlay.shader" />
+    <None Include="Assets/Resources/TextFiles/TEst 2.txt" />
     <None Include="Assets/TextMesh Pro/Shaders/TMP_Bitmap-Mobile.shader" />
     <None Include="Assets/TextMesh Pro/Fonts/LiberationSans - OFL.txt" />
     <None Include="Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile.shader" />

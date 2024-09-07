@@ -122,9 +122,12 @@ namespace GameLogic
                     break;
             }
         }
-        public void AddCardTo(Card card, List <Card> cardsrow)
+        public void AddCardTo(Card card, List <Card> cardsrow, bool top = false)
         { 
-            cardsrow.Add(card);
+            if(top)
+                cardsrow.Add(card);
+            else
+                cardsrow.Prepend(card);
             //Pone cada carta nueva bajo los efectos de las activas con efectos permanentes
             //la comprobacion type != 2 es para asegurar que la carta no es carta heroe
             foreach (Card Card in cardsrow)
@@ -185,6 +188,13 @@ namespace GameLogic
                     return deck;
                 case 0:
                     return hand;
+                case 7:
+                    return battleField.contactrow;
+                case 8:
+                    return battleField.distantrow;
+                case 9:
+                    return battleField.siegerow;
+                    
                 default:
                     throw new ArgumentOutOfRangeException(nameof(row), "Invalid row specified"); 
            }

@@ -6,7 +6,7 @@
                                 i = 0;
                                 while(i<5)
                                 {
-     				     context.Board.Push(context.Hand[i]);
+     				     context.Board.Add(context.Hand[i]);
 				     context.Hand.Shuffle();
                                      i++;
                                 };
