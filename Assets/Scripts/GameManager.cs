@@ -123,7 +123,7 @@ public class GameManager: MonoBehaviour
         {
             currenTurn ++;
             logicGame.currenTurn = currenTurn;
-            //Setea el nuevo jugador del turno
+            //Inicializa el nuevo jugador del turno
             playerOnTurn = (currenTurn%2==0)? player1 : player2;
             playerOnTurn.passed = false;
             //permite que la logica sepa que jugador esta en su turno

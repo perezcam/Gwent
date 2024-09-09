@@ -7,6 +7,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Xml.XPath;
 using GameLogic;
 using Interpeter;
 using Unity.PlasticSCM.Editor.WebApi;
@@ -721,7 +722,7 @@ public class Parser
                 return new AccesExpressionNode { Expression = expr };
             }
             else if ( expr is PropertyAccessNode || expr is CollectionIndexingNode)
-            {
+            {   
                 if(IsAssignmentOperator(CurrentToken.Type))
                 {
                     Token op = CurrentToken;
@@ -990,7 +991,12 @@ public class Parser
             Indexing.Index = ParseExpression();
             Indexing.Index.row = GetLastToken().Row;
             Match(TokenType.CloseBracket);
-            return Indexing;
+            expr = Indexing;
+        }
+        if(CurrentToken.Type == TokenType.PlusPlus || CurrentToken.Type == TokenType.MinusMinus)
+        {
+            expr = new UnaryExpressionNode{Operator = CurrentToken.Type, Operand =expr, Atend = true};
+            Match(CurrentToken.Type);
         }
         return expr;
     }

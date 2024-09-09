@@ -241,11 +241,27 @@ using UnityEngine;
         public void Visit(UnaryExpressionNode node,Scope scope)
         {
             node.Operand?.Accept(this,scope);
-            string OperandID = (node.Operand as IdentifierNode)!.Name!;
-            if(!scope.ContainsVar(OperandID))
-                errors.Add($"Variable no declarada: fila {node.Operand.row}");
-            if(scope.Resolve(OperandID) != "int")
-                errors.Add($"No se puede incrementar una variable que no sea de tipo numerico: fila {node.Operand.row}");
+            if(node.Operand is PropertyAccessNode)
+            {
+                if(EvaluateExpressionType(node.Operand,scope) != "int")
+                {
+                    errors.Add($"No se puede incrementar un objeto que no sea de tipo numerico: fila {node.Operand.row}");
+                }
+            }
+            else
+            {
+                if(node.Operand is IdentifierNode ID)
+                {
+                    string OperandID = ID.Name!;
+                    if(!scope.ContainsVar(OperandID))
+                        errors.Add($"Variable no declarada: fila {node.Operand.row}");
+                    if(scope.Resolve(OperandID) != "int")
+                    errors.Add($"No se puede incrementar una variable que no sea de tipo numerico: fila {node.Operand.row}");
+                }
+                else
+                    errors.Add($"No se puede incrementar el objeto de tipo {node.Operand.GetType()} de la fila {node.Operand.row}");
+            }
+            
         }
         public void Visit(MathBinaryExpressionNode node,Scope scope)
         {
