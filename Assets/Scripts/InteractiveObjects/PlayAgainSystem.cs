@@ -39,7 +39,7 @@ public class PlayAgainSystem : MonoBehaviour
     //Reiniciar juego
     public void OnClickYes()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        SceneManager.LoadScene("Initial");
     }
 
     // Salir del juego

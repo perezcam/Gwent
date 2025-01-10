@@ -43,7 +43,7 @@ public class DeckManager: MonoBehaviour
         SetDictionary(player);
      }
     
-    //metodo Fisher Yates para barajear
+    //metodo Fisher Yates
     public static void Shuffle<T>(List<T> list)
     {
         for (int i = 0; i < list.Count; i++)

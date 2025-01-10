@@ -4,6 +4,7 @@ using TMPro;
 using UnityEditor;
 using JetBrains.Annotations;
 using UnityEngine.UIElements;
+using UnityEngine.SceneManagement;
 
 
 
@@ -92,6 +93,6 @@ public class SetGameScene : MonoBehaviour
         gameData.GetComponent<DataBase>().faction1 = player1.GetComponent<SetPlayer>().faction;
         gameData.GetComponent<DataBase>().name2 = player2.GetComponent<SetPlayer>().label;
         gameData.GetComponent<DataBase>().faction2 = player2.GetComponent<SetPlayer>().faction;
-        changescene.ChangeScene();   
+        SceneManager.LoadScene("SampleScene"); 
     }
 }

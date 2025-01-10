@@ -73,6 +73,8 @@ using UnityEngine;
                EvaluateLiteralExpresionNode(node.Name);
                typeTable[node.Name] = "card";
             }
+            else
+               errors.Add($"No se recibio nombre en el efecto de la linea {node.Name.row}");
             node.Power?.Accept(this,scope);
             node.Faction.Accept(this,scope);
             node.Type.Accept(this,scope);
@@ -109,6 +111,7 @@ using UnityEngine;
                 errors.Add($"La carta esta haciendo referencia a un efecto no declarado: fila {node.Name.row}");
                 return;
             }
+            //Almacena todos los parametros declarados en el constructor del efecto y su respectivo tipo
             List<(string,string)> paramsDeclaration = new List<(string, string)>();
             foreach (var statement in node.assingments)
             {
@@ -116,6 +119,7 @@ using UnityEngine;
                 string assignmentType = EvaluateExpressionType(assignment.Value!,scope);
                 paramsDeclaration.Add(((assignment.Variable as IdentifierNode)!.Name!,assignmentType));
             }
+            //Verifica que se inserten todos los parametros que requiere el efecto referenciado
             List<(string,string)> paramsDiffer = new List<(string, string)>();
             foreach (var param in effectDebt[(string)node.Name.Value!])
             {
@@ -127,6 +131,7 @@ using UnityEngine;
         }
         public void Visit(SelectorNode node,Scope scope)
         {
+            //Verifica que la fuente introducida sea valida
             if(!possibleSources.ToList().Contains(node.source!.Name!))
                 errors.Add($"La fuente elegida en Source no es aceptable: fila {node.source.row}");
             node.single?.Accept(this,scope);
@@ -146,9 +151,15 @@ using UnityEngine;
             scope.Declare(node.target.Name!,"card");
             scope.typeInfo[node.target.Name!] = new CardInfo(node.target.Name!);
             node.filter?.Accept(this,scope);
+            //Verifica que la expresion del PredicateFunction sea un predicado
+            if(node.filter is not BooleanLiteralNode && node.filter is not BooleanBinaryExpressionNode)
+            {
+                errors.Add($"La expresion recibida no es un predicado: fila {node.filter.row}");
+            }
         }
         public void Visit(ActionBlockNode node,Scope scope)
         {
+            //Agrega el target y el context al scope
             IdentifierNode context_id = (IdentifierNode) node.context.Variable!; 
             scope.typeInfo[context_id.Name!] = new ContextInfo(context_id.Name!); 
             string targetsName = (node.target.Variable as IdentifierNode)!.Name!;
@@ -174,6 +185,9 @@ using UnityEngine;
                 scope.Declare(identifierNode.Name!,"card");
                 scope.typeInfo[identifierNode.Name!] = new CardInfo(identifierNode.Name!);
             }
+            if (EvaluateExpressionType(node.Collection,scope) != "List<card>")
+                errors.Add($"La coleccion recibida en el for de la fila {node.Variable.row} no es una lista de cartas");
+
             node.Body?.Accept(this,scope);
         }
         public void Visit(WhileStatementNode node,Scope scope)
@@ -193,6 +207,7 @@ using UnityEngine;
         {
             foreach (var statement in node.Statements)
             {   
+                //Verifica si el statement requiere de un nuevo scope o no
                 if(statement is AssignmentNode)
                 {
                     statement.Accept(this,scope);
@@ -332,11 +347,20 @@ using UnityEngine;
                 }
             }
             if(!methodParamsINOUT.ContainsKey(node.MethodName.Name))
+            {
                 errors.Add($"El metodo {node.MethodName.Name} no es valido : fila {node.MethodName.row}");
+                return;
+            }
             if(node.Arguments!.Count == 0 && methodParamsINOUT[node!.MethodName!.Name!].Item1 != "void")
+            {
                 errors.Add($"El metodo {node.MethodName.Name} recibe argumentos que no han sido asignados: fila {node.MethodName.row}");
+                return;
+            }
             else if(node.Arguments.Count!= 0 && methodParamsINOUT[node!.MethodName!.Name!].Item1 != EvaluateExpressionType(node.Arguments!.ElementAt(0),scope))
+            {
                 errors.Add($"El metodo recibe {methodParamsINOUT[node!.MethodName!.Name!].Item1} y recibio {EvaluateExpressionType(node.Arguments!.ElementAt(0),scope)}: fila {node.Arguments.First()}");
+                return;
+            }
             if(node.Target is null && methodParamsINOUT[node.MethodName.Name].Item1 != "player")
                 errors.Add($"El metodo {node.MethodName.Name} debe ser aplicado a una coleccion: fila {node.MethodName.row}");
         }
@@ -346,6 +370,7 @@ using UnityEngine;
             node.left?.Accept(this,scope);
             EvaluateExpressionType(node,scope);
         }
+        // Devuelve el tipo de la expresion recibida
         private string EvaluateExpressionType(ExpressionNode expr,Scope scope)
         {
             if (expr is IdentifierNode idNode)
@@ -434,6 +459,23 @@ using UnityEngine;
             }
             else if (expr is MethodCallNode method)
             {
+                if(!methodParamsINOUT.ContainsKey(method.MethodName.Name))
+                {
+                    errors.Add($"El metodo {method.MethodName.Name} no es valido : fila {method.row}");
+                    return null;
+                }
+                if(method.Arguments!.Count == 0 && methodParamsINOUT[method!.MethodName!.Name!].Item1 != "void")
+                {
+                    errors.Add($"El metodo {method.MethodName.Name} recibe argumentos que no han sido asignados: fila {method.row}");
+                    return null;
+                }
+                else if(method.Arguments.Count!= 0 && methodParamsINOUT[method!.MethodName!.Name!].Item1 != EvaluateExpressionType(method.Arguments!.ElementAt(0),scope))
+                {
+                    errors.Add($"El metodo recibe {methodParamsINOUT[method!.MethodName!.Name!].Item1} y recibio {EvaluateExpressionType(method.Arguments!.ElementAt(0),scope)}: fila {method.Arguments.First()}");
+                    return null;
+                }
+                if(method.Target is null && methodParamsINOUT[method.MethodName.Name].Item1 != "player")
+                    errors.Add($"El metodo {method.MethodName.Name} debe ser aplicado a una coleccion: fila {method.row}");
                 return methodParamsINOUT[method.MethodName!.Name!].Item2;
             }
             else if (expr is DataTypeNode typeNode)

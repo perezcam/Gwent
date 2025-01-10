@@ -50,14 +50,14 @@ namespace GameLogic
         public void SetContext()
         {
             context.hand = hand;
-            context.otherHand = enemy.hand;
+            context.otherhand = enemy.hand;
             context.deck = deck;
-            context.otherDeck = enemy.deck;
+            context.otherdeck = enemy.deck;
             context.graveyard = battleField.graveyard;
-            context.otherGraveyard = enemy.battleField.graveyard;
+            context.othergraveyard = enemy.battleField.graveyard;
             context.board = board;
             context.field = field;
-            context.otherField = enemy.field;
+            context.otherfield = enemy.field;
         }
         public void SetLogicDeck(List<int> UICardID)
         {

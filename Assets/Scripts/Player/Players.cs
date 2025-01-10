@@ -94,7 +94,12 @@ public class Player:MonoBehaviour
             }
             hand.Add(cards[0]);
             cards.RemoveAt(0);
-            GameManager.instance.logicGame.PlayerOnTurn().deck.Remove(GameManager.instance.logicGame.PlayerOnTurn().PlayerCardDictionary[cards[0].GetComponent<CardDisplay>().ID]);
+            if(GameManager.instance.logicGame.PlayerOnTurn().PlayerCardDictionary.ContainsKey(cards.First().GetComponent<CardDisplay>().ID))
+                GameManager.instance.logicGame.PlayerOnTurn().deck.Remove(GameManager.instance.logicGame.PlayerOnTurn().PlayerCardDictionary[cards.First().GetComponent<CardDisplay>().ID]);
+            else{
+                cards.RemoveAt(0);
+                GameManager.instance.logicGame.PlayerOnTurn().deck.Remove(GameManager.instance.logicGame.PlayerOnTurn().PlayerCardDictionary[cards.First().GetComponent<CardDisplay>().ID]);
+            }
         } 
     }
     public void HideOrShowCards()

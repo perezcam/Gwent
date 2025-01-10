@@ -131,7 +131,6 @@ public class Lexer
         { TokenType.PlusPlus,@"\+\+"},
         { TokenType.MinusMinus,@"\-\-"},
         { TokenType.Dot, @"\."},
-       // { TokenType.Enter, @"\n"},
         
         //MathOperator
         { TokenType.PlusEqual, @"\+="},

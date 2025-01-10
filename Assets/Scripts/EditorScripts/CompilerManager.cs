@@ -37,6 +37,7 @@ public class CompilerManager : MonoBehaviour
     }
     public void RunCompiler()
     {
+        ErrorReporter.text = "";
         //elimina todos los anteriores tags
             foreach (Transform child in LeftTagsPanel.transform)
             {
@@ -55,7 +56,7 @@ public class CompilerManager : MonoBehaviour
             ErrorReporter.text += error.Message + "\n";
             errors = true;
         }
-
+        //Si no hay errores detectados en la fase de Parser comienza ChequeoSemantico
         if(parser.errorList.Count == 0)
         {
             ErrorReporter.text = "";
@@ -66,7 +67,8 @@ public class CompilerManager : MonoBehaviour
                 errors = true;
             }
         }
-        evaluator = new Evaluate(programNode,this);
+        if(errors == false)
+            evaluator = new Evaluate(programNode,this);
         
         if(!errors)
             ErrorReporter.text += "COMPILACION COMPLETADA CON EXITO" + "\n";

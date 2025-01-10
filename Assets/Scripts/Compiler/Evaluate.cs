@@ -384,7 +384,7 @@ namespace Interpeter
             {
                 Type targetType = targetObject.GetType();
                 PropertyInfo propertyInfo;
-                //si el objetivo no es una carta entonces la propiedad de analiza en minuscula para casos como .Hand de haga .hand
+                //si el objetivo no es una carta entonces la propiedad de analiza en minuscula para casos como .Hand se haga .hand
                 //revisar si funciona bien en todos los casos
                 if(targetObject is not Card)
                 {
@@ -414,6 +414,7 @@ namespace Interpeter
         }
         public class PropertyReference
         {
+            //Simula referencia a memoria almacenando el objeto objetivo y el propertyInfo de la propiedad a acceder
             public object TargetObject { get; }
             public PropertyInfo PropertyInfo { get; }
             public PropertyReference(object targetObject, PropertyInfo propertyInfo)
@@ -524,6 +525,11 @@ namespace Interpeter
             // logica para adicionar a board o field debido a la falta de especificacion de fila en la DSL
             if (node.MethodName.Name == "Add" || node.MethodName.Name == "SendBottom"  || node.MethodName.Name == "Push")
             {
+                if(node.MethodName.Name == "Add")
+                {
+                    argumentTypes.Add(typeof(bool));
+                    argumentValues.Add(false);
+                }
                 GameLogic.Player player = GameManager.instance.logicGame.PlayerOnTurn();
                 
                 if(location.ToLower() == "board" || location.ToLower() == "field")
@@ -576,7 +582,7 @@ namespace Interpeter
             node.Value = result;
         }   
         #region MethodsRegion
-        public void Add(Card Card, List<Card> target,bool top = false)
+        public void Add(Card Card,bool top, List<Card> target)
         {
             //Genera una nueva carta con los datos de la original que le dio origen pero con un nuevo ID
             Card card = Card.Clone();
@@ -719,7 +725,7 @@ namespace Interpeter
         }
         public void Push(Card card, List<Card> target)
         {
-            this.Add(card,target,false);
+            this.Add(card,false,target);
         }
         public List<Card> HandOfPlayer(GameLogic.Player player)
         {
@@ -753,12 +759,13 @@ namespace Interpeter
         }
         public void SendBottom(Card card,List<Card> target)
         {
-            this.Add(card,target,true);
+            this.Add(card,true,target);
         }
         public void Remove(Card card,List<Card> target)
         {
             card.Owner.cardstodelinUI.Add(card.ID);
-            card.Owner.battleField.graveyard.Add(card);                 
+            card.Owner.battleField.graveyard.Add(card); 
+            card.Owner.totalforce -= card.Power;                
             target.Remove(card);
         }
         public List<Card> Find(PredicateFunction predicate, List<Card> target)
@@ -767,7 +774,11 @@ namespace Interpeter
             foreach (var card in target)
             {
                 var propertyValue = GetPropertyValue(card,predicate.propertyName);
-                if (Equals(propertyValue,(predicate.filter as BooleanBinaryExpressionNode).Right.Value))
+                (predicate.filter as BooleanBinaryExpressionNode).Left.Value = propertyValue;
+                Scope findScope = new Scope();
+                findScope.AssignVariable("x", card);
+                predicate.filter.Accept(this,findScope);
+                if((bool)(predicate.filter as BooleanBinaryExpressionNode).Value)
                 {
                     filter.Add(card);
                 }
@@ -820,18 +831,20 @@ namespace Interpeter
         {
             SemanticChecker.EvaluateLiteralExpresionNode(node);
         }
+        //Metodo para asignarle a las cartas con la estructura del Delegado Function
         public void ExcecuteCreatedCardFunction(Card card,List<Card>row)
         {
             CardNode createdCard =  createdCardsNode[card.ID];
             GameManager.instance.errorReporter.ShowError($"Efecto ejecutado, aqui se mostraran los errores en caso de existir");
+            card.Owner.totalforce += card.Power;
             foreach(ActivationBlockNode effectcall in createdCard.OnActivationBlock)
             {
                 ExcecuteCreatedCardFunction(effectcall);
             }
         }
+        // Metodo para evaluar bloques de activacion, de manera recursiva   
         public void ExcecuteCreatedCardFunction(ActivationBlockNode effectCall)
         {
-            
             EffectNode referencedEffect = declaratedEffects[(string)effectCall.effect.Name.Value];
             Scope EffectScope = new Scope();
             for (int i = 0; i < referencedEffect.Params.Count; i++)
@@ -846,7 +859,7 @@ namespace Interpeter
             EffectScope.Values["TriggerPlayer"] = GameManager.instance.logicGame.PlayerOnTurn();
             //ejecuta el efecto con los parametros ya recibidos
             referencedEffect.Accept(this,EffectScope);
-            if(effectCall.postAction is not null)
+            if(effectCall.postAction is not null && effectCall.postAction.effect is not null)
                 ExcecuteCreatedCardFunction(effectCall.postAction);
         }
     }

@@ -66,6 +66,7 @@ public class DropWeather : MonoBehaviour, IDropHandler
                 // Configura el objeto como hijo del contenedor y ajusta su posición
                 droppedCard.transform.SetParent(transform);
                 droppedCard.transform.position = transform.position;
+                cardOwner.hand.Remove(droppedCard);
                
                 if (dragHandler != null)
                 {

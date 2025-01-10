@@ -4,7 +4,6 @@ using System.Collections.Generic;
     {
         public string Name{get;set;}
         public Dictionary<string,string> Properties;
-
     }
     public class CardInfo: TypeInfo
     {

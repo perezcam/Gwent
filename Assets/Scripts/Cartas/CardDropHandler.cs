@@ -41,7 +41,10 @@ public class CardDropHandler : MonoBehaviour, IDropHandler
             {
                 //Coloca a la carta senuelo en el lugar de la carta
                 droppedCard.transform.SetParent(transform.parent);
+                droppedCard.GetComponent<CardDisplay>().owner.board.ShoworHideRow(droppedCard,0);
                 droppedCard.transform.position = transform.position;
+                //elimina la carta decoy de la mano
+                droppedCard.GetComponent<CardDisplay>().owner.hand.Remove(droppedCard);
                 if(droppedCard.transform.parent != W_attack.transform && droppedCard.transform.parent != W_distant.transform && droppedCard.transform.parent != W_siege.transform )
                     droppedCard.transform.localScale =  new Vector2(0.0244f,0.0255f);
 

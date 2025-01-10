@@ -12,13 +12,13 @@ namespace GameLogic
     public class Context
     {
         public List<Card> hand{get;set;}
-        public List<Card> otherHand{get;set;}
+        public List<Card> otherhand{get;set;}
         public List<Card> deck {get;set;}
-        public List<Card> otherDeck {get;set;}
+        public List<Card> otherdeck {get;set;}
         public List<Card> field{get;set;}
-        public List<Card> otherField{get;set;}
+        public List<Card> otherfield{get;set;}
         public List<Card> board{get;set;}
         public List<Card> graveyard{get;set;}
-        public List<Card> otherGraveyard{get;set;}
+        public List<Card> othergraveyard{get;set;}
     }
 }
